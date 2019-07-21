@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'groovy'
+}
+
+group 'java12-nio-non-blocking-client-server-workshop'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 12
+targetCompatibility = 12
+
+test {
+    exclude '**/workshop*'
+    exclude '**/answers/Answers*' // excluded due to travis bug: https://github.com/travis-ci/travis-ci/issues/7906
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.9.13'
+    testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.7'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.2-groovy-2.5'
+}
