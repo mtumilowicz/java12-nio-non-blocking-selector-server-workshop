@@ -29,8 +29,6 @@ public class SingleThreadedPollingNonBlockingServer {
                 System.out.println("Connected to " + newSocket);
                 newSocket.configureBlocking(false);
             }
-
-            System.out.println('a');
             
             sockets.stream().filter(SocketChannel::isConnected).forEach(sc -> handle(new ClientConnectionAnswer(sc)));
 
