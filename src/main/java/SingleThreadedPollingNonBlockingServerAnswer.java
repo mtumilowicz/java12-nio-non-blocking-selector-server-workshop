@@ -11,10 +11,10 @@ import static java.util.function.Predicate.not;
 /**
  * Created by mtumilowicz on 2019-07-21.
  */
-public class SingleThreadedPollingNonBlockingServer {
+public class SingleThreadedPollingNonBlockingServerAnswer {
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedPollingNonBlockingServer().start();
+        new SingleThreadedPollingNonBlockingServerAnswer().start();
     }
 
     public void start() throws IOException {
