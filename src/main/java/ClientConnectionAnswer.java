@@ -10,7 +10,6 @@ public class ClientConnectionAnswer implements Runnable {
     private final SocketChannel client;
     private final PrintWriter writer;
     private final InputStream reader;
-    ByteBuffer buf = ByteBuffer.allocateDirect(80);
 
     ClientConnectionAnswer(SocketChannel client) {
         this(
