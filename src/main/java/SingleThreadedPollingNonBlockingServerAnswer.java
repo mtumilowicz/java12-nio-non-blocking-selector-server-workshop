@@ -12,6 +12,16 @@ import static java.util.function.Predicate.not;
  * Created by mtumilowicz on 2019-07-21.
  */
 public class SingleThreadedPollingNonBlockingServerAnswer {
+    
+    private final int port;
+
+    public SingleThreadedPollingNonBlockingServerAnswer(int port) {
+        this.port = port;
+    }
+
+    public SingleThreadedPollingNonBlockingServerAnswer() {
+        this.port = 81;
+    }
 
     public static void main(String[] args) throws IOException {
         new SingleThreadedPollingNonBlockingServerAnswer().start();
