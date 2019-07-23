@@ -23,7 +23,7 @@ public class SingleThreadedPollingNonBlockingServer {
 
         List<SocketChannel> sockets = new ArrayList<>();
         while (true) {
-            SocketChannel newSocket = ssc.accept(); // mostly null - never blocks
+            SocketChannel newSocket = ssc.accept();
             if (newSocket != null) {
                 sockets.add(newSocket);
                 System.out.println("Connected to " + newSocket);
