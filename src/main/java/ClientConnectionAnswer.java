@@ -14,7 +14,10 @@ public class ClientConnectionAnswer implements Runnable {
         try {
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
             int read = read(buf);
-            close(read);
+            if (read == -1) {
+                client.close();
+                return;
+            }
             write(read, buf);
         } catch (IOException exception) {
             // workshops
@@ -23,13 +26,6 @@ public class ClientConnectionAnswer implements Runnable {
     
     int read(ByteBuffer buf) throws IOException {
         return client.read(buf);
-    }
-    
-    void close(int read) throws IOException {
-        if (read == -1) {
-            client.close();
-            return;
-        }
     }
     
     void write(int read, ByteBuffer buf) throws IOException {
