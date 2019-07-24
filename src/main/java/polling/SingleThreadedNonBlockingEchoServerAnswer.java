@@ -13,20 +13,20 @@ import static java.util.function.Predicate.not;
 /**
  * Created by mtumilowicz on 2019-07-21.
  */
-public class SingleThreadedEchoNonBlockingServerAnswer {
+public class SingleThreadedNonBlockingEchoServerAnswer {
     
     private final int port;
 
-    public SingleThreadedEchoNonBlockingServerAnswer(int port) {
+    public SingleThreadedNonBlockingEchoServerAnswer(int port) {
         this.port = port;
     }
 
-    public SingleThreadedEchoNonBlockingServerAnswer() {
+    public SingleThreadedNonBlockingEchoServerAnswer() {
         this.port = 81;
     }
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedEchoNonBlockingServerAnswer().start();
+        new SingleThreadedNonBlockingEchoServerAnswer().start();
     }
 
     public void start() throws IOException {

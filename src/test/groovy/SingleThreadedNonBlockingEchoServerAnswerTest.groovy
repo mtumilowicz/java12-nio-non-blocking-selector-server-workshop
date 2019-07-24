@@ -1,11 +1,11 @@
 import client.TestClient
-import polling.SingleThreadedEchoNonBlockingServerAnswer
+import polling.SingleThreadedNonBlockingEchoServerAnswer
 import spock.lang.Specification
 
 /**
  * Created by mtumilowicz on 2019-07-23.
  */
-class SingleThreadedEchoNonBlockingServerAnswerTest extends Specification {
+class SingleThreadedNonBlockingEchoServerAnswerTest extends Specification {
 
     def expectedClientOutput = ["send: xxx", "received: xxx"]
 
@@ -14,7 +14,7 @@ class SingleThreadedEchoNonBlockingServerAnswerTest extends Specification {
         def port = 1
 
         expect:
-        expectedClientOutput == extractClientOutputFor(port, new SingleThreadedEchoNonBlockingServerAnswer(port))
+        expectedClientOutput == extractClientOutputFor(port, new SingleThreadedNonBlockingEchoServerAnswer(port))
     }
     
     def extractClientOutputFor(port, server) {
