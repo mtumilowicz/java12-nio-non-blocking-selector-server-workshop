@@ -2,6 +2,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+/**
+ * Created by mtumilowicz on 2019-07-21.
+ */
 public class ClientConnectionAnswer implements Runnable {
     private final SocketChannel client;
 
