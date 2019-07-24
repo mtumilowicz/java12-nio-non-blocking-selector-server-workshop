@@ -6,7 +6,7 @@ import spock.lang.Specification
  */
 class SingleThreadedPollingNonBlockingServerAnswerTest extends Specification {
 
-    def expectedClientOutput = ["send: xxx", "received: XXX"]
+    def expectedClientOutput = ["send: xxx", "received: xxx"]
 
     def "SingleThreadedPollingNonBlockingServerAnswer"() {
         given:
@@ -18,7 +18,7 @@ class SingleThreadedPollingNonBlockingServerAnswerTest extends Specification {
     
     def extractClientOutputFor(port, server) {
         new Thread({ server.start() }).start()
-        Thread.sleep(10)
+        Thread.sleep(100)
         new TestClient(port).run()
     }
 }

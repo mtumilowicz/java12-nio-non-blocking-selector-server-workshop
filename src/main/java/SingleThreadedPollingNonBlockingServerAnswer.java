@@ -28,9 +28,11 @@ public class SingleThreadedPollingNonBlockingServerAnswer {
     }
 
     public void start() throws IOException {
+        log("Creating server socket on port " + port);
         ServerSocketChannel ssc = ServerSocketChannel.open();
-        ssc.bind(new InetSocketAddress(81));
+        ssc.bind(new InetSocketAddress("localhost", port));
         ssc.configureBlocking(false);
+        log("Created server socket on port " + port);
 
         List<SocketChannel> sockets = new ArrayList<>();
         while (true) {
@@ -49,5 +51,9 @@ public class SingleThreadedPollingNonBlockingServerAnswer {
 
     private void handle(Runnable clientConnection) {
         clientConnection.run();
+    }
+
+    private void log(String message) {
+        System.out.println(message);
     }
 }
