@@ -1,3 +1,5 @@
+package polling;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
@@ -11,20 +13,20 @@ import static java.util.function.Predicate.not;
 /**
  * Created by mtumilowicz on 2019-07-21.
  */
-public class SingleThreadedPollingNonBlockingServerAnswer {
+public class SingleThreadedEchoNonBlockingServerAnswer {
     
     private final int port;
 
-    public SingleThreadedPollingNonBlockingServerAnswer(int port) {
+    public SingleThreadedEchoNonBlockingServerAnswer(int port) {
         this.port = port;
     }
 
-    public SingleThreadedPollingNonBlockingServerAnswer() {
+    public SingleThreadedEchoNonBlockingServerAnswer() {
         this.port = 81;
     }
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedPollingNonBlockingServerAnswer().start();
+        new SingleThreadedEchoNonBlockingServerAnswer().start();
     }
 
     public void start() throws IOException {
