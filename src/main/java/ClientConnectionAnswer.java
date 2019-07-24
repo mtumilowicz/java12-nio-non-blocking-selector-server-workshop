@@ -30,9 +30,9 @@ public class ClientConnectionAnswer implements Runnable {
     void write(int read, ByteBuffer buf) throws IOException {
         if (read > 0) {
             buf.flip();
-            for (int i = 0; i < buf.limit(); i++) {
-                buf.put(i, buf.get(i));
-            }
+//            for (int i = 0; i < buf.limit(); i++) {
+//                buf.put(i, buf.get(i));
+//            }
             while(buf.hasRemaining()) {
                 client.write(buf);
             }
