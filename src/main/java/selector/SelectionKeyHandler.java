@@ -41,20 +41,24 @@ public class SelectionKeyHandler {
     }
 
     public static void read(SelectionKey key, Map<SocketChannel, Queue<ByteBuffer>> dataToHandle) throws IOException {
-        SocketChannel sc = (SocketChannel) key.channel();
+        SocketChannel client = (SocketChannel) key.channel();
         ByteBuffer buf = ByteBuffer.allocateDirect(80);
-        int read = sc.read(buf);
-        if (read == -1) {
-            dataToHandle.remove(sc);
-            return;
-        }
+        int read = client.read(buf);
         if (read > 0) {
             buf.flip();
             for (int i = 0; i < buf.limit(); i++) {
                 buf.put(i, buf.get(i));
             }
-            dataToHandle.get(sc).add(buf);
+            dataToHandle.get(client).add(buf);
             key.interestOps(SelectionKey.OP_WRITE);
+        }
+        closeAndRemoveClientIfEnd(read, client, dataToHandle);
+    }
+
+    private static void closeAndRemoveClientIfEnd(int read, SocketChannel client, Map<SocketChannel, Queue<ByteBuffer>> dataToHandle) throws IOException {
+        if (read == -1) {
+            client.close();
+            dataToHandle.remove(client);
         }
     }
 
