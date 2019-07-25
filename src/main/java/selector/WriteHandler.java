@@ -11,22 +11,15 @@ import java.util.Queue;
  * Created by mtumilowicz on 2019-07-24.
  */
 public class WriteHandler {
-
-    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
-
-    public WriteHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-        this.pendingData = pendingData;
-    }
-
-    public void handle(SelectionKey key) throws IOException {
+    public void handle(SelectionKey key, Map<SocketChannel, Queue<ByteBuffer>> dataToHandle) throws IOException {
         SocketChannel sc = (SocketChannel) key.channel();
-        Queue<ByteBuffer> queue = pendingData.get(sc);
+        Queue<ByteBuffer> queue = dataToHandle.get(sc);
         while(!queue.isEmpty()) {
             ByteBuffer buf = queue.peek();
             int written = sc.write(buf);
             if (written == -1) {
                 sc.close();
-                pendingData.remove(sc);
+                dataToHandle.remove(sc);
                 return;
             }
             if (buf.hasRemaining()) {

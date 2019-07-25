@@ -13,18 +13,18 @@ import java.util.Queue;
  */
 public class SelectionKeyHandler {
     public static void handle(SelectionKey key) {
-        Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>();
-        AcceptHandler acceptHandler = new AcceptHandler(pendingData);
-        ReadHandler readHandler = new ReadHandler(pendingData);
-        WriteHandler writeHandler = new WriteHandler(pendingData);
+        Map<SocketChannel, Queue<ByteBuffer>> dataToHandle = new HashMap<>();
+        AcceptHandler acceptHandler = new AcceptHandler();
+        ReadHandler readHandler = new ReadHandler();
+        WriteHandler writeHandler = new WriteHandler();
 
         try {
             if (key.isAcceptable()) {
-                acceptHandler.handle(key);
+                acceptHandler.handle(key, dataToHandle);
             } else if (key.isReadable()) {
-                readHandler.handle(key);
+                readHandler.handle(key, dataToHandle);
             } else if (key.isWritable()) {
-                writeHandler.handle(key);
+                writeHandler.handle(key, dataToHandle);
             }
         } catch (IOException e) {
             // workshops
