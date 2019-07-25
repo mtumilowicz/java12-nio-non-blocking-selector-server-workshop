@@ -3,41 +3,53 @@ package polling;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 
 /**
  * Created by mtumilowicz on 2019-07-21.
  */
 public class ClientConnectionAnswer implements Runnable {
     private final SocketChannel client;
+    private final ByteBuffer buf;
 
     ClientConnectionAnswer(SocketChannel client) {
+        this(client, ByteBuffer.allocateDirect(80));
+    }
+
+    ClientConnectionAnswer(SocketChannel client, ByteBuffer buf) {
         this.client = client;
+        this.buf = buf;
     }
 
     @Override
     public void run() {
         try {
-            ByteBuffer buf = ByteBuffer.allocateDirect(80);
             int read = client.read(buf);
-            if (read == -1) {
-                client.close();
-                return;
+            if (read > 0) {
+                writeBufferToClient();
             }
-            write(read, buf);
+            closeClientIfEnd(read);
         } catch (IOException exception) {
             // workshops
         }
     }
-    
-    void write(int read, ByteBuffer buf) throws IOException {
-        if (read > 0) {
-            buf.flip();
-//            for (int i = 0; i < buf.limit(); i++) {
-//                buf.put(i, buf.get(i));
-//            }
-            while(buf.hasRemaining()) {
-                client.write(buf);
-            }
+
+    private void closeClientIfEnd(int read) throws IOException {
+        if (read == -1) {
+            client.close();
         }
+    }
+
+    private void writeBufferToClient() throws IOException {
+        buf.flip();
+        transformBytesInBuffer(UnaryOperator.identity(), buf);
+        while (buf.hasRemaining()) {
+            client.write(buf);
+        }
+    }
+
+    private void transformBytesInBuffer(UnaryOperator<Byte> transformation, ByteBuffer buf) {
+        IntStream.range(0, buf.limit()).forEach(i -> buf.put(i, transformation.apply(buf.get(i))));
     }
 }
