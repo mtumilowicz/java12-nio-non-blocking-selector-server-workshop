@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 
 /**
  * Created by mtumilowicz on 2019-07-25.
@@ -45,14 +47,20 @@ public class SelectionKeyHandler {
         ByteBuffer buf = ByteBuffer.allocateDirect(80);
         int read = client.read(buf);
         if (read > 0) {
-            buf.flip();
-            for (int i = 0; i < buf.limit(); i++) {
-                buf.put(i, buf.get(i));
-            }
-            dataToHandle.get(client).add(buf);
-            key.interestOps(SelectionKey.OP_WRITE);
+            read(key, buf, client, dataToHandle);
         }
         closeAndRemoveClientIfEnd(read, client, dataToHandle);
+    }
+
+    private static void read(SelectionKey key, ByteBuffer buf, SocketChannel client, Map<SocketChannel, Queue<ByteBuffer>> dataToHandle) throws IOException {
+        buf.flip();
+        transformBytesInBuffer(UnaryOperator.identity(), buf);
+        dataToHandle.get(client).add(buf);
+        key.interestOps(SelectionKey.OP_WRITE);
+    }
+
+    private static void transformBytesInBuffer(UnaryOperator<Byte> transformation, ByteBuffer buf) {
+        IntStream.range(0, buf.limit()).forEach(i -> buf.put(i, transformation.apply(buf.get(i))));
     }
 
     private static void closeAndRemoveClientIfEnd(int read, SocketChannel client, Map<SocketChannel, Queue<ByteBuffer>> dataToHandle) throws IOException {
