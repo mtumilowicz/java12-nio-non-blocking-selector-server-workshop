@@ -15,23 +15,23 @@ public class WriteHandler {
 
     public void handle(SelectionKey key) throws IOException {
         if (key.isValid() && key.isWritable()) {
-            SocketChannel sc = (SocketChannel) key.channel();
-            Queue<ByteBuffer> queue = pendingData.get(sc);
-            while (!queue.isEmpty()) {
-                ByteBuffer buf = queue.peek();
-                int written = sc.write(buf);
-                if (written == -1) {
-                    sc.close();
-                    pendingData.remove(sc);
+            SocketChannel client = (SocketChannel) key.channel();
+            Queue<ByteBuffer> buffersToWrite = pendingData.get(client);
+            while (!buffersToWrite.isEmpty()) {
+                ByteBuffer buf = buffersToWrite.peek();
+                int bytesWritten = client.write(buf);
+                if (bytesWritten == -1) {
+                    closeClientIfEnd(client);
                     return;
                 }
-                if (buf.hasRemaining()) {
-                    return;
-                } else {
-                    queue.remove();
-                }
+                buffersToWrite.remove();
             }
             key.interestOps(SelectionKey.OP_READ);
         }
+    }
+
+    private void closeClientIfEnd(SocketChannel client) throws IOException {
+            pendingData.remove(client);
+            client.close();
     }
 }
