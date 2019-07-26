@@ -21,14 +21,18 @@ public class ReadHandler {
         ByteBuffer buf = ByteBuffer.allocateDirect(80);
         int read = sc.read(buf);
         if (read > 0) {
-            transform(buf, UnaryOperator.identity());
-            pendingData.get(sc).add(buf);
+            read(sc, buf);
             key.interestOps(SelectionKey.OP_WRITE);
         }
         if (read == -1) {
             pendingData.remove(sc);
             sc.close();
         }
+    }
+    
+    void read(SocketChannel sc, ByteBuffer buf) {
+        transform(buf, UnaryOperator.identity());
+        pendingData.get(sc).add(buf);
     }
 
     public static void transform(ByteBuffer buf, UnaryOperator<Byte> transformation) {
