@@ -9,7 +9,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.Queue;
 
-public class ReadHandler implements Handler<SelectionKey, IOException> {
+public class ReadHandler {
   private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
   public ReadHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {

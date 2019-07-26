@@ -1,7 +1,6 @@
 package selector.server;
 
 import selector.handler.AcceptHandler;
-import selector.handler.Handler;
 import selector.handler.PooledReadHandler;
 import selector.handler.WriteHandler;
 
@@ -33,9 +32,9 @@ public class SelectorNonBlockingServerWithWorkerPool {
     Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
 
     Map<SocketChannel, Queue<ByteBuffer>> pendingData = new ConcurrentHashMap<>();
-    Handler<SelectionKey, IOException> acceptHandler = new AcceptHandler(pendingData);
-    Handler<SelectionKey, IOException> readHandler = new PooledReadHandler(pool, pendingData, selectorActions);
-    Handler<SelectionKey, IOException> writeHandler = new WriteHandler(pendingData);
+    AcceptHandler acceptHandler = new AcceptHandler(pendingData);
+    PooledReadHandler readHandler = new PooledReadHandler(pool, pendingData, selectorActions);
+    WriteHandler writeHandler = new WriteHandler(pendingData);
 
     while (true) {
       selector.select();

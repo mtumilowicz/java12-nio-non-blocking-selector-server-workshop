@@ -1,7 +1,6 @@
 package selector.server;
 
 import selector.handler.AcceptHandler;
-import selector.handler.Handler;
 import selector.handler.ReadHandler;
 import selector.handler.WriteHandler;
 
@@ -28,9 +27,9 @@ public class SingleThreadedSelectorNonBlockingServer {
     ssc.register(selector, SelectionKey.OP_ACCEPT);
 
     Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>();
-    Handler<SelectionKey, IOException> acceptHandler = new AcceptHandler(pendingData);
-    Handler<SelectionKey, IOException> readHandler = new ReadHandler(pendingData);
-    Handler<SelectionKey, IOException> writeHandler = new WriteHandler(pendingData);
+    AcceptHandler acceptHandler = new AcceptHandler(pendingData);
+    ReadHandler readHandler = new ReadHandler(pendingData);
+    WriteHandler writeHandler = new WriteHandler(pendingData);
 
     while (true) {
       selector.select();

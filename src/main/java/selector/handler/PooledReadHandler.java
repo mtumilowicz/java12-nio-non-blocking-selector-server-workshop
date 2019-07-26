@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
-public class PooledReadHandler implements Handler<SelectionKey, IOException> {
+public class PooledReadHandler {
   private final ExecutorService pool;
   private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
   private final Queue<Runnable> selectorActions;

@@ -6,7 +6,7 @@ import java.nio.channels.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class AcceptHandler implements Handler<SelectionKey, IOException> {
+public class AcceptHandler {
   private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
   public AcceptHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {

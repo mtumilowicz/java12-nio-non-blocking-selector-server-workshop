@@ -6,7 +6,7 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-public class WriteHandler implements Handler<SelectionKey, IOException> {
+public class WriteHandler {
   private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
   public WriteHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
