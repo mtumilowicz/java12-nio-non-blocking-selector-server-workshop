@@ -27,6 +27,7 @@ public class ReadHandler {
         }
         if (read == -1) {
             pendingData.remove(sc);
+            sc.close();
         }
     }
 
