@@ -18,14 +18,17 @@ import java.util.stream.IntStream;
 public class SelectionKeyHandler {
     public static void handle(SelectionKey key) {
         Map<SocketChannel, Queue<ByteBuffer>> dataToHandle = new HashMap<>();
+        AcceptHandler acceptHandler = new AcceptHandler(dataToHandle);
+        ReadHandler readHandler = new ReadHandler(dataToHandle);
+        WriteHandler writeHandler = new WriteHandler(dataToHandle);
 
         try {
             if (key.isAcceptable()) {
-                accept(key, dataToHandle);
+                acceptHandler.handle(key);
             } else if (key.isReadable()) {
-                read(key, dataToHandle);
+                readHandler.handle(key);
             } else if (key.isWritable()) {
-                write(key, dataToHandle);
+                writeHandler.handle(key);
             }
         } catch (IOException e) {
             // workshops
