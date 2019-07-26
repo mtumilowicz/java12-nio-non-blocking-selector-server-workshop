@@ -19,6 +19,6 @@ public class SingleThreadedSelectorNonBlockingServer {
         Selector selector = Selector.open();
         ssc.register(selector, SelectionKey.OP_ACCEPT);
 
-        SelectorKeysHandler.handle(selector);
+        new SelectorKeysHandler().handle(selector);
     }
 }
