@@ -31,16 +31,11 @@ public class SelectorKeysHandler {
 
     final void handleKey(SelectionKey key) {
         try {
-            if (key.isValid()) {
-                if (key.isAcceptable()) {
-                    acceptHandler.handle(key);
-                } else if (key.isReadable()) {
-                    readHandler.handle(key);
-                } else if (key.isWritable()) {
-                    writeHandler.handle(key);
-                }
-            }
-        } catch (Exception ex) {
+            acceptHandler.handle(key);
+            readHandler.handle(key);
+            writeHandler.handle(key);
+        } catch (
+                Exception ex) {
             // workshops
         }
     }

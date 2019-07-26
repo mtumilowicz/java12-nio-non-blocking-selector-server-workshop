@@ -14,11 +14,13 @@ public class AcceptHandler {
     }
 
     public void handle(SelectionKey key) throws IOException {
-        ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
-        SocketChannel sc = ssc.accept(); // never null, nonblocking
-        System.out.println("Someone connected: " + sc);
-        sc.configureBlocking(false);
-        pendingData.put(sc, new ConcurrentLinkedQueue<>());
-        sc.register(key.selector(), SelectionKey.OP_READ);
+        if (key.isValid() && key.isAcceptable()) {
+            ServerSocketChannel channel = (ServerSocketChannel) key.channel();
+            SocketChannel client = channel.accept(); // never null, nonblocking
+            System.out.println("Client connected: " + client);
+            client.configureBlocking(false);
+            pendingData.put(client, new ConcurrentLinkedQueue<>());
+            client.register(key.selector(), SelectionKey.OP_READ);
+        }
     }
 }

@@ -14,22 +14,24 @@ public class WriteHandler {
     }
 
     public void handle(SelectionKey key) throws IOException {
-        SocketChannel sc = (SocketChannel) key.channel();
-        Queue<ByteBuffer> queue = pendingData.get(sc);
-        while (!queue.isEmpty()) {
-            ByteBuffer buf = queue.peek();
-            int written = sc.write(buf);
-            if (written == -1) {
-                sc.close();
-                pendingData.remove(sc);
-                return;
+        if (key.isValid() && key.isWritable()) {
+            SocketChannel sc = (SocketChannel) key.channel();
+            Queue<ByteBuffer> queue = pendingData.get(sc);
+            while (!queue.isEmpty()) {
+                ByteBuffer buf = queue.peek();
+                int written = sc.write(buf);
+                if (written == -1) {
+                    sc.close();
+                    pendingData.remove(sc);
+                    return;
+                }
+                if (buf.hasRemaining()) {
+                    return;
+                } else {
+                    queue.remove();
+                }
             }
-            if (buf.hasRemaining()) {
-                return;
-            } else {
-                queue.remove();
-            }
+            key.interestOps(SelectionKey.OP_READ);
         }
-        key.interestOps(SelectionKey.OP_READ);
     }
 }
