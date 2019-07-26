@@ -1,5 +1,6 @@
+package xxx
+
 import client.TestClient
-import selector.SingleThreadedNonBlockingEchoServerAnswer
 import spock.lang.Specification
 
 /**
