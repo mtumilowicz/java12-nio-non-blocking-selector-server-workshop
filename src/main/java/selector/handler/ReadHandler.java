@@ -18,23 +18,35 @@ public class ReadHandler {
 
     public void handle(SelectionKey key) throws IOException {
         if (key.isValid() && key.isReadable()) {
-            SocketChannel sc = (SocketChannel) key.channel();
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
-            int read = sc.read(buf);
-            if (read > 0) {
-                read(sc, buf);
-                key.interestOps(SelectionKey.OP_WRITE);
+            SocketChannel client = (SocketChannel) key.channel();
+            int bytesRead = read(client, buf);
+            if (bytesRead > 0) {
+                switchToWrite(bytesRead, key);
             }
-            if (read == -1) {
-                pendingData.remove(sc);
-                sc.close();
-            }
+            closeClientIfEnd(bytesRead, client);
         }
     }
 
-    void read(SocketChannel sc, ByteBuffer buf) {
-        transform(buf, UnaryOperator.identity());
-        pendingData.get(sc).add(buf);
+    void switchToWrite(int bytesRead, SelectionKey key) {
+        key.interestOps(SelectionKey.OP_WRITE);
+    }
+
+    int read(SocketChannel client, ByteBuffer buf) throws IOException {
+        int read = client.read(buf);
+        if (read > 0) {
+            transform(buf, UnaryOperator.identity());
+            pendingData.get(client).add(buf);
+        }
+
+        return read;
+    }
+
+    void closeClientIfEnd(int read, SocketChannel client) throws IOException {
+        if (read == -1) {
+            pendingData.remove(client);
+            client.close();
+        }
     }
 
     public static void transform(ByteBuffer buf, UnaryOperator<Byte> transformation) {
