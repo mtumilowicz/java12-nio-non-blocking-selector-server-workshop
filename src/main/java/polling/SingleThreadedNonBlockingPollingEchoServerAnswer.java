@@ -14,20 +14,20 @@ import static java.util.Objects.nonNull;
 /**
  * Created by mtumilowicz on 2019-07-21.
  */
-public class SingleThreadedNonBlockingEchoServerAnswer {
+public class SingleThreadedNonBlockingPollingEchoServerAnswer {
     
     private final int port;
 
-    public SingleThreadedNonBlockingEchoServerAnswer(int port) {
+    public SingleThreadedNonBlockingPollingEchoServerAnswer(int port) {
         this.port = port;
     }
 
-    public SingleThreadedNonBlockingEchoServerAnswer() {
+    public SingleThreadedNonBlockingPollingEchoServerAnswer() {
         this.port = 81;
     }
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedNonBlockingEchoServerAnswer().start();
+        new SingleThreadedNonBlockingPollingEchoServerAnswer().start();
     }
 
     public void start() throws IOException {

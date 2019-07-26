@@ -9,20 +9,20 @@ import java.nio.channels.ServerSocketChannel;
 /**
  * Created by mtumilowicz on 2019-07-24.
  */
-public class SingleThreadedNonBlockingEchoServer {
+public class SingleThreadedNonBlockingEchoServerAnswer {
 
     private final int port;
 
-    public SingleThreadedNonBlockingEchoServer(int port) {
+    public SingleThreadedNonBlockingEchoServerAnswer(int port) {
         this.port = port;
     }
 
-    public SingleThreadedNonBlockingEchoServer() {
+    public SingleThreadedNonBlockingEchoServerAnswer() {
         this.port = 81;
     }
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedNonBlockingEchoServer().start();
+        new SingleThreadedNonBlockingEchoServerAnswer().start();
     }
 
     public void start() throws IOException {
