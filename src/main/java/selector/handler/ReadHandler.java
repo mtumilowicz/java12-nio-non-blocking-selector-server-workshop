@@ -1,7 +1,5 @@
 package selector.handler;
 
-import selector.util.Util;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -23,7 +21,7 @@ public class ReadHandler {
         ByteBuffer buf = ByteBuffer.allocateDirect(80);
         int read = sc.read(buf);
         if (read > 0) {
-            Util.transmogrify(buf);
+            transform(buf, UnaryOperator.identity());
             pendingData.get(sc).add(buf);
             key.interestOps(SelectionKey.OP_WRITE);
         }
