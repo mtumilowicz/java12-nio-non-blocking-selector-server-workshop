@@ -14,7 +14,7 @@ public class AcceptHandler {
     }
 
     public void handle(SelectionKey key) throws IOException {
-        if (key.isValid() && key.isAcceptable()) {
+        if (canBeAccepted(key)) {
             ServerSocketChannel channel = (ServerSocketChannel) key.channel();
             SocketChannel client = channel.accept(); // never null, nonblocking
             System.out.println("Client connected: " + client);
@@ -22,5 +22,9 @@ public class AcceptHandler {
             pendingData.put(client, new ConcurrentLinkedQueue<>());
             client.register(key.selector(), SelectionKey.OP_READ);
         }
+    }
+
+    boolean canBeAccepted(SelectionKey key) {
+        return key.isValid() && key.isAcceptable();
     }
 }
