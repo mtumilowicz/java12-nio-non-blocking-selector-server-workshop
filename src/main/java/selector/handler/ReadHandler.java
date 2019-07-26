@@ -1,12 +1,13 @@
 package selector.handler;
 
-import handler.*;
-import util.*;
+import selector.util.Util;
 
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
-import java.util.*;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.SocketChannel;
+import java.util.Map;
+import java.util.Queue;
 
 public class ReadHandler implements Handler<SelectionKey, IOException> {
   private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;

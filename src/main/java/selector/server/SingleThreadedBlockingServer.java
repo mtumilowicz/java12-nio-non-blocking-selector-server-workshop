@@ -1,9 +1,13 @@
 package selector.server;
 
-import handler.*;
+import selector.handler.ExceptionHandler;
+import selector.handler.Handler;
+import selector.handler.PrintingHandler;
+import selector.handler.TransmogrifyHandler;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class SingleThreadedBlockingServer {
   public static void main(String... args) throws IOException {

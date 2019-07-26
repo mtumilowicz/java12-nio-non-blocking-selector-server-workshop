@@ -1,11 +1,16 @@
 package selector.server;
 
-import handler.*;
+import selector.handler.ExceptionHandler;
+import selector.handler.Handler;
+import selector.handler.TransmogrifyChannelHandler;
 
-import java.io.*;
-import java.net.*;
-import java.nio.channels.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class SingleThreadedPollingNonBlockingServer {
   public static void main(String... args) throws IOException {

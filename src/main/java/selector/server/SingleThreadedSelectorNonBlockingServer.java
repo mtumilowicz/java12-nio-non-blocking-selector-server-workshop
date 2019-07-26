@@ -1,11 +1,17 @@
 package selector.server;
 
-import handler.*;
+import selector.handler.AcceptHandler;
+import selector.handler.Handler;
+import selector.handler.ReadHandler;
+import selector.handler.WriteHandler;
 
-import java.io.*;
-import java.net.*;
-import java.nio.*;
-import java.nio.channels.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.*;
 
 public class SingleThreadedSelectorNonBlockingServer {
