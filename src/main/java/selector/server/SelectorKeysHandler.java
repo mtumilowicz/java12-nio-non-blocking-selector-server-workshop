@@ -19,28 +19,29 @@ public class SelectorKeysHandler {
     AcceptHandler acceptHandler = new AcceptHandler(pendingData);
     ReadHandler readHandler = new ReadHandler(pendingData);
     WriteHandler writeHandler = new WriteHandler(pendingData);
-    
+
     public final void handle(Selector selector) throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
-            for (Iterator<SelectionKey> it = keys.iterator(); it.hasNext(); ) {
-                SelectionKey key = it.next();
-                it.remove();
-                handleKey(key);
-            }
+            keys.forEach(this::handleKey);
+            keys.clear();
         }
     }
-    
-    public final void handleKey(SelectionKey key) throws IOException {
-        if (key.isValid()) {
-            if (key.isAcceptable()) {
-                acceptHandler.handle(key);
-            } else if (key.isReadable()) {
-                readHandler.handle(key);
-            } else if (key.isWritable()) {
-                writeHandler.handle(key);
+
+    final void handleKey(SelectionKey key) {
+        try {
+            if (key.isValid()) {
+                if (key.isAcceptable()) {
+                    acceptHandler.handle(key);
+                } else if (key.isReadable()) {
+                    readHandler.handle(key);
+                } else if (key.isWritable()) {
+                    writeHandler.handle(key);
+                }
             }
+        } catch (Exception ex) {
+            // workshops
         }
     }
 }
