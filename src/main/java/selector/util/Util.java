@@ -12,8 +12,12 @@ public class Util {
     // after reading "hello": pos = 5 limit = 80 capacity = 80
     // set pos = 0 and limit = 5
     buf.flip();
+//    for (int i = 0; i < buf.limit(); i++) {
+//      buf.put(i, (byte) transmogrify(buf.get(i)));
+//    }
+
     for (int i = 0; i < buf.limit(); i++) {
-      buf.put(i, (byte) transmogrify(buf.get(i)));
+      buf.put(i, buf.get(i));
     }
   }
 }

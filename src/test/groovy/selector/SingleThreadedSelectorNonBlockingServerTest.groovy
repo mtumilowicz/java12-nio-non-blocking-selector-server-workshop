@@ -13,7 +13,7 @@ class SingleThreadedSelectorNonBlockingServerTest extends Specification {
 
     def "SingleThreadedPollingNonBlockingServerAnswer"() {
         given:
-        def port = 8080
+        def port = 81
 
         expect:
         expectedClientOutput == extractClientOutputFor(port, new SingleThreadedSelectorNonBlockingServer())
