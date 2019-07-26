@@ -19,7 +19,6 @@ public class AcceptHandler {
         System.out.println("Someone connected: " + sc);
         sc.configureBlocking(false);
         pendingData.put(sc, new ConcurrentLinkedQueue<>());
-
         sc.register(key.selector(), SelectionKey.OP_READ);
     }
 }
