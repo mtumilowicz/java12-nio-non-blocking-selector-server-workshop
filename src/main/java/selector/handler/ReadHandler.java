@@ -10,24 +10,24 @@ import java.util.Map;
 import java.util.Queue;
 
 public class ReadHandler {
-  private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
+    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-  public ReadHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-    this.pendingData = pendingData;
-  }
+    public ReadHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+        this.pendingData = pendingData;
+    }
 
-  public void handle(SelectionKey key) throws IOException {
-    SocketChannel sc = (SocketChannel) key.channel();
-    ByteBuffer buf = ByteBuffer.allocateDirect(80);
-    int read = sc.read(buf);
-    if (read == -1) {
-      pendingData.remove(sc);
-      return;
+    public void handle(SelectionKey key) throws IOException {
+        SocketChannel sc = (SocketChannel) key.channel();
+        ByteBuffer buf = ByteBuffer.allocateDirect(80);
+        int read = sc.read(buf);
+        if (read == -1) {
+            pendingData.remove(sc);
+            return;
+        }
+        if (read > 0) {
+            Util.transmogrify(buf);
+            pendingData.get(sc).add(buf);
+            key.interestOps(SelectionKey.OP_WRITE);
+        }
     }
-    if (read > 0) {
-      Util.transmogrify(buf);
-      pendingData.get(sc).add(buf);
-      key.interestOps(SelectionKey.OP_WRITE);
-    }
-  }
 }

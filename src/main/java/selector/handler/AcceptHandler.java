@@ -7,19 +7,19 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class AcceptHandler {
-  private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
+    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-  public AcceptHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-    this.pendingData = pendingData;
-  }
+    public AcceptHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+        this.pendingData = pendingData;
+    }
 
-  public void handle(SelectionKey key) throws IOException {
-    ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
-    SocketChannel sc = ssc.accept(); // never null, nonblocking
-    System.out.println("Someone connected: " + sc);
-    sc.configureBlocking(false);
-    pendingData.put(sc, new ConcurrentLinkedQueue<>());
+    public void handle(SelectionKey key) throws IOException {
+        ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
+        SocketChannel sc = ssc.accept(); // never null, nonblocking
+        System.out.println("Someone connected: " + sc);
+        sc.configureBlocking(false);
+        pendingData.put(sc, new ConcurrentLinkedQueue<>());
 
-    sc.register(key.selector(), SelectionKey.OP_READ);
-  }
+        sc.register(key.selector(), SelectionKey.OP_READ);
+    }
 }
