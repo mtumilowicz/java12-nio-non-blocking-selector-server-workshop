@@ -15,7 +15,8 @@ import java.nio.channels.SocketChannel;
 import java.util.*;
 
 public class SingleThreadedSelectorNonBlockingServer {
-  public static void main(String... args) throws IOException {
+  
+  public static void start() throws IOException {
     ServerSocketChannel ssc = ServerSocketChannel.open();
     ssc.bind(new InetSocketAddress(8080));
     ssc.configureBlocking(false);
