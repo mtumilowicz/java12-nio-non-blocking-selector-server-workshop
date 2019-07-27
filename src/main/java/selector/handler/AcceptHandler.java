@@ -24,7 +24,7 @@ public class AcceptHandler {
         }
     }
 
-    boolean canBeAccepted(SelectionKey key) {
+    private boolean canBeAccepted(SelectionKey key) {
         return key.isValid() && key.isAcceptable();
     }
 }
