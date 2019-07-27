@@ -28,11 +28,11 @@ public class ReadHandler {
         }
     }
 
-    void switchToWrite(int bytesRead, SelectionKey key) {
+    private void switchToWrite(int bytesRead, SelectionKey key) {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
-    int read(SocketChannel client, ByteBuffer buf) throws IOException {
+    private int read(SocketChannel client, ByteBuffer buf) throws IOException {
         int read = client.read(buf);
         if (read > 0) {
             transform(buf, UnaryOperator.identity());
@@ -42,14 +42,14 @@ public class ReadHandler {
         return read;
     }
 
-    void closeClientIfEnd(int read, SocketChannel client) throws IOException {
+    private void closeClientIfEnd(int read, SocketChannel client) throws IOException {
         if (read == -1) {
             pendingData.remove(client);
             client.close();
         }
     }
 
-    public static void transform(ByteBuffer buf, UnaryOperator<Byte> transformation) {
+    private static void transform(ByteBuffer buf, UnaryOperator<Byte> transformation) {
         buf.flip();
         IntStream.range(0, buf.limit()).forEach(i -> buf.put(i, transformation.apply(buf.get(i))));
     }
