@@ -14,13 +14,13 @@ import java.util.*;
 /**
  * Created by mtumilowicz on 2019-07-26.
  */
-public class SelectorKeysHandler {
-    Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>();
-    AcceptHandler acceptHandler = new AcceptHandler(pendingData);
-    ReadHandler readHandler = new ReadHandler(pendingData);
-    WriteHandler writeHandler = new WriteHandler(pendingData);
+class SelectorKeysHandler {
+    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>();
+    private final AcceptHandler acceptHandler = new AcceptHandler(pendingData);
+    private final ReadHandler readHandler = new ReadHandler(pendingData);
+    private final WriteHandler writeHandler = new WriteHandler(pendingData);
 
-    public final void handle(Selector selector) throws IOException {
+    final void handle(Selector selector) throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
@@ -29,7 +29,7 @@ public class SelectorKeysHandler {
         }
     }
 
-    final void handleKey(SelectionKey key) {
+    private void handleKey(SelectionKey key) {
         try {
             acceptHandler.handle(key);
             readHandler.handle(key);
