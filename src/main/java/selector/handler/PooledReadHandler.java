@@ -24,20 +24,22 @@ public class PooledReadHandler {
     }
 
     public void handle(SelectionKey key) throws IOException {
-        SocketChannel sc = (SocketChannel) key.channel();
-        ByteBuffer buf = ByteBuffer.allocateDirect(80);
-        int read = sc.read(buf);
-        if (read == -1) {
-            pendingData.remove(sc);
-            return;
-        }
-        if (read > 0) {
-            pool.submit(() -> {
-                transform(buf, UnaryOperator.identity());
-                pendingData.get(sc).add(buf);
-                selectorActions.add(() -> key.interestOps(SelectionKey.OP_WRITE));
-                key.selector().wakeup();
-            });
+        if (key.isValid() && key.isReadable()) {
+            SocketChannel sc = (SocketChannel) key.channel();
+            ByteBuffer buf = ByteBuffer.allocateDirect(80);
+            int read = sc.read(buf);
+            if (read == -1) {
+                pendingData.remove(sc);
+                return;
+            }
+            if (read > 0) {
+                pool.submit(() -> {
+                    transform(buf, UnaryOperator.identity());
+                    pendingData.get(sc).add(buf);
+                    selectorActions.add(() -> key.interestOps(SelectionKey.OP_WRITE));
+                    key.selector().wakeup();
+                });
+            }
         }
     }
 
