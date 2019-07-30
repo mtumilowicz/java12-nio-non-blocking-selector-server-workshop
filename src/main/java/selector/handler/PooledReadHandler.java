@@ -1,7 +1,5 @@
 package selector.handler;
 
-import selector.util.Util;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -9,6 +7,8 @@ import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
+import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 
 public class PooledReadHandler {
     private final ExecutorService pool;
@@ -33,11 +33,16 @@ public class PooledReadHandler {
         }
         if (read > 0) {
             pool.submit(() -> {
-                Util.transmogrify(buf);
+                transform(buf, UnaryOperator.identity());
                 pendingData.get(sc).add(buf);
                 selectorActions.add(() -> key.interestOps(SelectionKey.OP_WRITE));
                 key.selector().wakeup();
             });
         }
+    }
+
+    private static void transform(ByteBuffer buf, UnaryOperator<Byte> transformation) {
+        buf.flip();
+        IntStream.range(0, buf.limit()).forEach(i -> buf.put(i, transformation.apply(buf.get(i))));
     }
 }
