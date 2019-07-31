@@ -1,10 +1,11 @@
 package polling;
 
+import transformer.BufferTransformer;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.function.UnaryOperator;
-import java.util.stream.IntStream;
 
 /**
  * Created by mtumilowicz on 2019-07-21.
@@ -14,14 +15,10 @@ public class ClientConnectionAnswer implements Runnable {
     private final ByteBuffer buf;
 
     ClientConnectionAnswer(SocketChannel client) {
-        this(client, ByteBuffer.allocateDirect(80));
-    }
-
-    ClientConnectionAnswer(SocketChannel client, ByteBuffer buf) {
         this.client = client;
-        this.buf = buf;
+        this.buf = ByteBuffer.allocateDirect(80);
     }
-
+    
     @Override
     public void run() {
         try {
@@ -43,13 +40,9 @@ public class ClientConnectionAnswer implements Runnable {
 
     private void writeBufferToClient() throws IOException {
         buf.flip();
-        transformBytesInBuffer(UnaryOperator.identity(), buf);
+        BufferTransformer.transformBytes(buf, UnaryOperator.identity());
         while (buf.hasRemaining()) {
             client.write(buf);
         }
-    }
-
-    private void transformBytesInBuffer(UnaryOperator<Byte> transformation, ByteBuffer buf) {
-        IntStream.range(0, buf.limit()).forEach(i -> buf.put(i, transformation.apply(buf.get(i))));
     }
 }

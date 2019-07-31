@@ -1,5 +1,7 @@
 package selector.handler;
 
+import transformer.BufferTransformer;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -7,7 +9,6 @@ import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.Queue;
 import java.util.function.UnaryOperator;
-import java.util.stream.IntStream;
 
 public class ReadHandler {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
@@ -35,7 +36,8 @@ public class ReadHandler {
     private int read(SocketChannel client, ByteBuffer buf) throws IOException {
         int read = client.read(buf);
         if (read > 0) {
-            transform(buf, UnaryOperator.identity());
+            buf.flip();
+            BufferTransformer.transformBytes(buf, UnaryOperator.identity());
             pendingData.get(client).add(buf);
         }
 
@@ -47,10 +49,5 @@ public class ReadHandler {
             pendingData.remove(client);
             client.close();
         }
-    }
-
-    private static void transform(ByteBuffer buf, UnaryOperator<Byte> transformation) {
-        buf.flip();
-        IntStream.range(0, buf.limit()).forEach(i -> buf.put(i, transformation.apply(buf.get(i))));
     }
 }
