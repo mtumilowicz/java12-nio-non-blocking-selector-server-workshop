@@ -18,7 +18,7 @@ public class ClientConnectionAnswer implements Runnable {
         this.client = client;
         this.buf = ByteBuffer.allocateDirect(80);
     }
-    
+
     @Override
     public void run() {
         try {
@@ -41,8 +41,6 @@ public class ClientConnectionAnswer implements Runnable {
     private void writeBufferToClient() throws IOException {
         buf.flip();
         BufferTransformer.transformBytes(buf, UnaryOperator.identity());
-        while (buf.hasRemaining()) {
-            client.write(buf);
-        }
+        client.write(buf);
     }
 }
