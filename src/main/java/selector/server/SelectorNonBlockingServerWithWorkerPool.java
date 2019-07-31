@@ -1,35 +1,27 @@
 package selector.server;
 
 import selector.handler.PooledSelectorKeysHandler;
+import server.XServer;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 
-public class SelectorNonBlockingServerWithWorkerPool {
-
-    private final int port;
+public class SelectorNonBlockingServerWithWorkerPool extends XServer {
 
     public SelectorNonBlockingServerWithWorkerPool(int port) {
-        this.port = port;
+        super(port);
     }
 
     public static void main(String[] args) throws IOException {
         new SelectorNonBlockingServerWithWorkerPool(81).start();
     }
-    
-    public void start() throws IOException {
-        log("Creating server socket on port " + port);
-        ServerSocketChannel ssc = ServerSocketChannel.open();
-        ssc.bind(new InetSocketAddress(port));
-        ssc.configureBlocking(false);
-        log("Created server socket on port " + port);
-        
+
+    @Override
+    protected void processSockets(ServerSocketChannel ssc) throws IOException {
         Selector selector = Selector.open();
         ssc.register(selector, SelectionKey.OP_ACCEPT);
-
         new PooledSelectorKeysHandler().handle(selector);
     }
 
