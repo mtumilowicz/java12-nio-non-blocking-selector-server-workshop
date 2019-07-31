@@ -21,12 +21,19 @@ public class SelectorNonBlockingServerWithWorkerPool {
     }
     
     public void start() throws IOException {
+        log("Creating server socket on port " + port);
         ServerSocketChannel ssc = ServerSocketChannel.open();
         ssc.bind(new InetSocketAddress(port));
         ssc.configureBlocking(false);
+        log("Created server socket on port " + port);
+        
         Selector selector = Selector.open();
         ssc.register(selector, SelectionKey.OP_ACCEPT);
 
         new PooledSelectorKeysHandler().handle(selector);
+    }
+
+    private void log(String message) {
+        System.out.println(message);
     }
 }
