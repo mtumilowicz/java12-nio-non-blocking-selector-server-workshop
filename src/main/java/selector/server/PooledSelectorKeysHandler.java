@@ -31,18 +31,16 @@ public class PooledSelectorKeysHandler {
     public void handle(Selector selector) throws IOException {
         while (true) {
             selector.select();
-            processSelectorActions();
+            runAndClearSelectorActions();
             Set<SelectionKey> keys = selector.selectedKeys();
             keys.forEach(this::handleKey);
             keys.clear();
         }
     }
 
-    public void processSelectorActions() {
-        Runnable action;
-        while ((action = selectorActions.poll()) != null) {
-            action.run();
-        }
+    public void runAndClearSelectorActions() {
+        selectorActions.forEach(Runnable::run);
+        selectorActions.clear();
     }
 
     private void handleKey(SelectionKey key) {
