@@ -56,11 +56,15 @@ public class SingleThreadedNonBlockingPollingEchoServerAnswer {
     }
     
     private void handleConnected(List<SocketChannel> sockets) {
-        sockets.stream().filter(SocketChannel::isConnected).forEach(sc -> handle(new ClientConnectionAnswer(sc)));
+        sockets.stream()
+                .filter(SocketChannel::isConnected)
+                .forEach(sc -> handle(new ClientConnectionAnswer(sc)));
     }
     
     private List<SocketChannel> removeNotConnected(List<SocketChannel> sockets) {
-        return sockets.stream().filter(SocketChannel::isConnected).collect(Collectors.toList());
+        return sockets.stream()
+                .filter(SocketChannel::isConnected)
+                .collect(Collectors.toList());
     }
 
     private void handle(Runnable clientConnection) {
