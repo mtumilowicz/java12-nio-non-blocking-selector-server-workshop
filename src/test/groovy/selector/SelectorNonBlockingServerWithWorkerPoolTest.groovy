@@ -13,10 +13,10 @@ class SelectorNonBlockingServerWithWorkerPoolTest extends Specification {
 
     def "SingleThreadedPollingNonBlockingServerAnswer"() {
         given:
-        def port = 81
+        def port = 2
 
         expect:
-        expectedClientOutput == extractClientOutputFor(port, new SelectorNonBlockingServerWithWorkerPool())
+        expectedClientOutput == extractClientOutputFor(port, new SelectorNonBlockingServerWithWorkerPool(port))
     }
     
     def extractClientOutputFor(port, server) {

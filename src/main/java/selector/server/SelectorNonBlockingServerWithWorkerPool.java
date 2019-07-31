@@ -8,13 +8,23 @@ import java.nio.channels.ServerSocketChannel;
 
 public class SelectorNonBlockingServerWithWorkerPool {
 
+    private final int port;
+
+    public SelectorNonBlockingServerWithWorkerPool(int port) {
+        this.port = port;
+    }
+
+    public SelectorNonBlockingServerWithWorkerPool() {
+        this.port = 81;
+    }
+
     public static void main(String[] args) throws IOException {
-        SelectorNonBlockingServerWithWorkerPool.start();
+        new SelectorNonBlockingServerWithWorkerPool().start();
     }
     
-    public static void start() throws IOException {
+    public void start() throws IOException {
         ServerSocketChannel ssc = ServerSocketChannel.open();
-        ssc.bind(new InetSocketAddress(81));
+        ssc.bind(new InetSocketAddress(port));
         ssc.configureBlocking(false);
         Selector selector = Selector.open();
         ssc.register(selector, SelectionKey.OP_ACCEPT);
