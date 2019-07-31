@@ -1,3 +1,5 @@
+package server;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
@@ -5,10 +7,10 @@ import java.nio.channels.ServerSocketChannel;
 /**
  * Created by mtumilowicz on 2019-07-31.
  */
-public abstract class Server {
-    private final int port;
+public abstract class XServer {
+    protected final int port;
 
-    public Server(int port) {
+    public XServer(int port) {
         this.port = port;
     }
 
@@ -19,10 +21,10 @@ public abstract class Server {
         ssc.configureBlocking(false);
         log("Created server socket on port " + port);
 
-        processSockets();
+        processSockets(ssc);
     }
 
-    protected abstract void processSockets();
+    protected abstract void processSockets(ServerSocketChannel ssc) throws IOException;
 
     private void log(String message) {
         System.out.println(message);
