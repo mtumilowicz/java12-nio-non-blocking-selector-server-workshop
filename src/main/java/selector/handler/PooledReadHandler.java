@@ -11,20 +11,20 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.function.UnaryOperator;
 
-public class PooledReadHandler {
+class PooledReadHandler {
     private final ExecutorService pool;
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
     private final Queue<Runnable> selectorActions;
 
-    public PooledReadHandler(ExecutorService pool,
-                             Map<SocketChannel, Queue<ByteBuffer>> pendingData,
-                             Queue<Runnable> selectorActions) {
+    PooledReadHandler(ExecutorService pool,
+                      Map<SocketChannel, Queue<ByteBuffer>> pendingData,
+                      Queue<Runnable> selectorActions) {
         this.pool = pool;
         this.pendingData = pendingData;
         this.selectorActions = selectorActions;
     }
 
-    public void handle(SelectionKey key) throws IOException {
+    void handle(SelectionKey key) throws IOException {
         if (key.isValid() && key.isReadable()) {
             SocketChannel sc = (SocketChannel) key.channel();
             ByteBuffer buf = ByteBuffer.allocateDirect(80);

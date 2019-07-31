@@ -1,26 +1,25 @@
-package selector.server;
-
-import selector.handler.AcceptHandler;
-import selector.handler.ReadHandler;
-import selector.handler.WriteHandler;
+package selector.handler;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * Created by mtumilowicz on 2019-07-26.
  */
-class SelectorKeysHandler {
+public class SelectorKeysHandler {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>();
     private final AcceptHandler acceptHandler = new AcceptHandler(pendingData);
     private final ReadHandler readHandler = new ReadHandler(pendingData);
     private final WriteHandler writeHandler = new WriteHandler(pendingData);
 
-    final void handle(Selector selector) throws IOException {
+    public final void handle(Selector selector) throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();

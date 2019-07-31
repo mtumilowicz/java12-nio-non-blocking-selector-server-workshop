@@ -6,14 +6,14 @@ import java.nio.channels.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class AcceptHandler {
+class AcceptHandler {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-    public AcceptHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    AcceptHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingData = pendingData;
     }
 
-    public void handle(SelectionKey key) throws IOException {
+    void handle(SelectionKey key) throws IOException {
         if (canBeAccepted(key)) {
             ServerSocketChannel channel = (ServerSocketChannel) key.channel();
             SocketChannel client = channel.accept(); // never null, nonblocking

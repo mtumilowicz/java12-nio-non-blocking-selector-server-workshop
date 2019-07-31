@@ -10,14 +10,14 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.function.UnaryOperator;
 
-public class ReadHandler {
+class ReadHandler {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-    public ReadHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    ReadHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingData = pendingData;
     }
 
-    public void handle(SelectionKey key) throws IOException {
+    void handle(SelectionKey key) throws IOException {
         if (key.isValid() && key.isReadable()) {
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
             SocketChannel client = (SocketChannel) key.channel();

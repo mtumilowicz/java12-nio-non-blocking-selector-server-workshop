@@ -6,14 +6,14 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-public class WriteHandler {
+class WriteHandler {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-    public WriteHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    WriteHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingData = pendingData;
     }
 
-    public void handle(SelectionKey key) throws IOException {
+    void handle(SelectionKey key) throws IOException {
         if (key.isValid() && key.isWritable()) {
             SocketChannel client = (SocketChannel) key.channel();
             Queue<ByteBuffer> buffersToWrite = pendingData.get(client);

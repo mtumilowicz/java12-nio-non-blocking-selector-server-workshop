@@ -1,8 +1,4 @@
-package selector.server;
-
-import selector.handler.AcceptHandler;
-import selector.handler.PooledReadHandler;
-import selector.handler.WriteHandler;
+package selector.handler;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -21,12 +17,12 @@ import java.util.concurrent.Executors;
  * Created by mtumilowicz on 2019-07-30.
  */
 public class PooledSelectorKeysHandler {
-    final ExecutorService pool = Executors.newFixedThreadPool(10);
-    final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new ConcurrentHashMap<>();
-    final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
-    final AcceptHandler acceptHandler = new AcceptHandler(pendingData);
-    final PooledReadHandler readHandler = new PooledReadHandler(pool, pendingData, selectorActions);
-    final WriteHandler writeHandler = new WriteHandler(pendingData);
+    private final ExecutorService pool = Executors.newFixedThreadPool(10);
+    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new ConcurrentHashMap<>();
+    private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
+    private final AcceptHandler acceptHandler = new AcceptHandler(pendingData);
+    private final PooledReadHandler readHandler = new PooledReadHandler(pool, pendingData, selectorActions);
+    private final WriteHandler writeHandler = new WriteHandler(pendingData);
 
     public void handle(Selector selector) throws IOException {
         while (true) {
@@ -38,7 +34,7 @@ public class PooledSelectorKeysHandler {
         }
     }
 
-    public void runAndClearSelectorActions() {
+    private void runAndClearSelectorActions() {
         selectorActions.forEach(Runnable::run);
         selectorActions.clear();
     }
