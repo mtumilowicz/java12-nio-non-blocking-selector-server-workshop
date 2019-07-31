@@ -22,12 +22,8 @@ public class SingleThreadedNonBlockingPollingEchoServerAnswer {
         this.port = port;
     }
 
-    public SingleThreadedNonBlockingPollingEchoServerAnswer() {
-        this.port = 81;
-    }
-
     public static void main(String[] args) throws IOException {
-        new SingleThreadedNonBlockingPollingEchoServerAnswer().start();
+        new SingleThreadedNonBlockingPollingEchoServerAnswer(81).start();
     }
 
     public void start() throws IOException {

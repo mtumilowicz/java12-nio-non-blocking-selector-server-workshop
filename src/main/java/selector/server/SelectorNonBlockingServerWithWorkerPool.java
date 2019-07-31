@@ -14,12 +14,8 @@ public class SelectorNonBlockingServerWithWorkerPool {
         this.port = port;
     }
 
-    public SelectorNonBlockingServerWithWorkerPool() {
-        this.port = 81;
-    }
-
     public static void main(String[] args) throws IOException {
-        new SelectorNonBlockingServerWithWorkerPool().start();
+        new SelectorNonBlockingServerWithWorkerPool(81).start();
     }
     
     public void start() throws IOException {

@@ -14,12 +14,8 @@ public class SingleThreadedSelectorNonBlockingServer {
         this.port = port;
     }
 
-    public SingleThreadedSelectorNonBlockingServer() {
-        this.port = 81;
-    }
-
     public static void main(String[] args) throws IOException {
-        new SingleThreadedSelectorNonBlockingServer().start();
+        new SingleThreadedSelectorNonBlockingServer(81).start();
     }
 
     public void start() throws IOException {
