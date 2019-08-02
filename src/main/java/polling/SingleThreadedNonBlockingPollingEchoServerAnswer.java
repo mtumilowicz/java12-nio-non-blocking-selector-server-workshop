@@ -5,10 +5,7 @@ import server.XServer;
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -27,38 +24,22 @@ public class SingleThreadedNonBlockingPollingEchoServerAnswer extends XServer {
 
     @Override
     protected void processSockets(ServerSocketChannel ssc) throws IOException {
-        List<SocketChannel> sockets = new ArrayList<>();
+        var clients = new SocketChannelsAnswer();
         while (true) {
-            acceptConnection(ssc).ifPresent(sockets::add);
-            handleConnected(sockets);
-            sockets = removeNotConnected(sockets);
+            acceptConnection(ssc).ifPresent(clients::add);
+            clients.handleConnected();
+            clients.removeNotConnected();
         }
     }
 
     private Optional<SocketChannel> acceptConnection(ServerSocketChannel ssc) throws IOException {
         SocketChannel newSocket = ssc.accept();
         if (nonNull(newSocket)) {
-            System.out.println("Connected to " + newSocket);
+            log("Connected to " + newSocket);
             newSocket.configureBlocking(false);
         }
 
         return Optional.ofNullable(newSocket);
-    }
-
-    private void handleConnected(List<SocketChannel> sockets) {
-        sockets.stream()
-                .filter(SocketChannel::isConnected)
-                .forEach(sc -> handle(new ClientConnectionAnswer(sc)));
-    }
-
-    private List<SocketChannel> removeNotConnected(List<SocketChannel> sockets) {
-        return sockets.stream()
-                .filter(SocketChannel::isConnected)
-                .collect(Collectors.toList());
-    }
-
-    private void handle(Runnable clientConnection) {
-        clientConnection.run();
     }
 
     private void log(String message) {
