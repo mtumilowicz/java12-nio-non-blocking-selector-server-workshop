@@ -18,17 +18,23 @@ class AcceptHandlerWorkshop {
 
     void handle(SelectionKey key) throws IOException {
         if (canBeAccepted(key)) {
-            ServerSocketChannel channel = (ServerSocketChannel) key.channel();
-            SocketChannel client = channel.accept(); // never null, nonblocking
+            // get ServerSocketChannel from key, hint: key.channel() + casting
+            // accept connection, hint: channel.accept()
+            // note that this operation is non blocking and the output is never null
+            SocketChannel client = null;
             log("Client connected: " + client);
-            client.configureBlocking(false);
-            pendingData.put(client, new ConcurrentLinkedQueue<>());
-            client.register(key.selector(), SelectionKey.OP_READ);
+            // switch client to be non blocking, hint: configureBlocking(false)
+            // insert placeholder queue for that client into pendingData
+            // hint: use ConcurrentLinkedQueue
+            // register selector to listen for reads of that client
+            // hint: client.register(..., SelectionKey.OP_READ), key.selector()
         }
     }
 
     private boolean canBeAccepted(SelectionKey key) {
-        return key.isValid() && key.isAcceptable();
+        // key must be valid and must be ready for accept
+        // hint: isValid(), isAcceptable()
+        return false;
     }
 
     private void log(String message) {
