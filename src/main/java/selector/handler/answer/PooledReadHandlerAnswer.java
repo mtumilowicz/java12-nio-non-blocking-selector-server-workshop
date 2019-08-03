@@ -1,17 +1,13 @@
 package selector.handler.answer;
 
-import transformer.BufferTransformer;
-
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
-import java.util.function.UnaryOperator;
 
-class PooledReadHandlerAnswer extends XReadHandlerAnswer {
+class PooledReadHandlerAnswer extends ReadHandlerAnswer {
     private final ExecutorService pool;
     private final Queue<Runnable> selectorActions;
 
@@ -30,7 +26,7 @@ class PooledReadHandlerAnswer extends XReadHandlerAnswer {
     }
 
     @Override
-    void xxx(SelectionKey key, ByteBuffer buf) {
+    void write(SelectionKey key, ByteBuffer buf) {
         pool.submit(() -> {
             writeToBuffer(key, buf);
         });
