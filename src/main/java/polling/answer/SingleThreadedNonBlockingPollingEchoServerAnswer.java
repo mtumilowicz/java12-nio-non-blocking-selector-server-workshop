@@ -1,6 +1,6 @@
 package polling.answer;
 
-import server.NonBlockingServerAnswer;
+import server.answer.NonBlockingServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;

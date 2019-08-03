@@ -1,7 +1,7 @@
 package selector.server.workshop;
 
 import selector.handler.answer.SelectorKeysHandlerAnswer;
-import server.XNBServerAnswer;
+import server.answer.XNBServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;

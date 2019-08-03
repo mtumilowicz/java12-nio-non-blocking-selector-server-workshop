@@ -1,4 +1,6 @@
-package server;
+package server.workshop;
+
+import server.answer.NonBlockingServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -8,8 +10,8 @@ import java.nio.channels.ServerSocketChannel;
 /**
  * Created by mtumilowicz on 2019-07-31.
  */
-public abstract class XNBServerAnswer extends NonBlockingServerAnswer {
-    public XNBServerAnswer(int port) {
+public abstract class XNBServerWorkshop extends NonBlockingServerAnswer {
+    public XNBServerWorkshop(int port) {
         super(port);
     }
 

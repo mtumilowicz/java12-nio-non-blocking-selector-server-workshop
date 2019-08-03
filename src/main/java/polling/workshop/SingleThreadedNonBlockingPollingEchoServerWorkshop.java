@@ -1,6 +1,6 @@
 package polling.workshop;
 
-import server.NonBlockingServerWorkshop;
+import server.workshop.NonBlockingServerWorkshop;
 
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
