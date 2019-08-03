@@ -21,6 +21,9 @@ abstract class ReadHandlerAnswer {
         if (canBeRead(key)) {
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
             int bytesRead = read(key, buf);
+            if (bytesRead > 0) {
+                write(key, buf);
+            }
             closeClientIfEnd(bytesRead, key);
         }
     }
@@ -31,12 +34,8 @@ abstract class ReadHandlerAnswer {
 
     private int read(SelectionKey key, ByteBuffer buf) throws IOException {
         SocketChannel client = (SocketChannel) key.channel();
-        int read = client.read(buf);
-        if (read > 0) {
-            write(key, buf);
-        }
 
-        return read;
+        return client.read(buf);
     }
 
     void writeToBuffer(SelectionKey key, ByteBuffer buf) {
