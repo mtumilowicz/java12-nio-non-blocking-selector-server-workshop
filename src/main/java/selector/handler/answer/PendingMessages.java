@@ -13,6 +13,10 @@ class PendingMessages {
         this.pendingMessagesByClient = pendingData;
     }
 
+    void addFor(SocketChannel client, ByteBuffer buf) {
+        pendingMessagesByClient.get(client).add(buf);
+    }
+
     void sendTo(SocketChannel client) throws IOException {
         var buffersToWrite = pendingMessagesByClient.get(client);
         while (!buffersToWrite.isEmpty()) {
@@ -24,7 +28,7 @@ class PendingMessages {
         }
     }
 
-    private void closeClientIfEnd(SocketChannel client) throws IOException {
+    void closeClientIfEnd(SocketChannel client) throws IOException {
         pendingMessagesByClient.remove(client);
         client.close();
     }

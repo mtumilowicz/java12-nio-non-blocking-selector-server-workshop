@@ -21,7 +21,7 @@ public class PooledSelectorKeysHandlerAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new ConcurrentHashMap<>();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
     private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingData);
-    private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, pendingData, selectorActions);
+    private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, new PendingMessages(pendingData), selectorActions);
     private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(new PendingMessages(pendingData));
 
     public void handle(Selector selector) throws IOException {

@@ -6,25 +6,26 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.Map;
-import java.util.Queue;
 import java.util.function.UnaryOperator;
 
 abstract class ReadHandlerAnswer {
-    final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
+    private final PendingMessages pendingMessages;
 
-    ReadHandlerAnswer(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-        this.pendingData = pendingData;
+    ReadHandlerAnswer(PendingMessages pendingMessages) {
+        this.pendingMessages = pendingMessages;
     }
 
     void handle(SelectionKey key) throws IOException {
         if (canBeRead(key)) {
+            SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
-            int bytesRead = read(key, buf);
+            int bytesRead = client.read(buf);
             if (bytesRead > 0) {
                 prepareConnectionForWriting(key, buf);
             }
-            closeClientIfEnd(bytesRead, key);
+            if (bytesRead == -1) {
+                pendingMessages.closeClientIfEnd(client);
+            }
         }
     }
 
@@ -32,38 +33,16 @@ abstract class ReadHandlerAnswer {
 
     abstract void prepareConnectionForWriting(SelectionKey key, ByteBuffer buf);
 
-    private int read(SelectionKey key, ByteBuffer buf) throws IOException {
-        SocketChannel client = (SocketChannel) key.channel();
-
-        return client.read(buf);
-    }
-
     void prepareForSendingToClient(SelectionKey key, ByteBuffer buf) {
         prepareBuffer(buf);
-        queueBuffer(key, buf);
-        prepareKey(key);
-    }
-
-    void prepareBuffer(ByteBuffer buf) {
-        buf.flip();
-        BufferTransformer.transformBytes(buf, UnaryOperator.identity());
-    }
-
-    void queueBuffer(SelectionKey key, ByteBuffer buf) {
         SocketChannel client = (SocketChannel) key.channel();
-        pendingData.get(client).add(buf);
-    }
-
-    void prepareKey(SelectionKey key) {
+        pendingMessages.addFor(client, buf);
         switchToWrite(key);
     }
 
-    private void closeClientIfEnd(int read, SelectionKey key) throws IOException {
-        if (read == -1) {
-            SocketChannel client = (SocketChannel) key.channel();
-            pendingData.remove(client);
-            client.close();
-        }
+    private void prepareBuffer(ByteBuffer buf) {
+        buf.flip();
+        BufferTransformer.transformBytes(buf, UnaryOperator.identity());
     }
 
     private boolean canBeRead(SelectionKey key) {

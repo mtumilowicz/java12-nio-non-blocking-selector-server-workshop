@@ -2,14 +2,11 @@ package selector.handler.answer;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
-import java.util.Map;
-import java.util.Queue;
 
 class SingleThreadedReadHandlerAnswer extends ReadHandlerAnswer {
 
-    SingleThreadedReadHandlerAnswer(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-        super(pendingData);
+    SingleThreadedReadHandlerAnswer(PendingMessages pendingMessages) {
+        super(pendingMessages);
     }
 
     @Override

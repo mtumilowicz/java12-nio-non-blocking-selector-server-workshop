@@ -2,8 +2,6 @@ package selector.handler.answer;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
@@ -12,9 +10,9 @@ class PooledReadHandlerAnswer extends ReadHandlerAnswer {
     private final Queue<Runnable> selectorActions;
 
     PooledReadHandlerAnswer(ExecutorService pool,
-                            Map<SocketChannel, Queue<ByteBuffer>> pendingData,
+                            PendingMessages pendingMessages,
                             Queue<Runnable> selectorActions) {
-        super(pendingData);
+        super(pendingMessages);
         this.pool = pool;
         this.selectorActions = selectorActions;
     }
@@ -27,8 +25,6 @@ class PooledReadHandlerAnswer extends ReadHandlerAnswer {
 
     @Override
     void prepareConnectionForWriting(SelectionKey key, ByteBuffer buf) {
-        pool.submit(() -> {
-            prepareForSendingToClient(key, buf);
-        });
+        pool.submit(() -> prepareForSendingToClient(key, buf));
     }
 }
