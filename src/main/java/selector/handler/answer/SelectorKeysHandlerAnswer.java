@@ -17,7 +17,7 @@ public class SelectorKeysHandlerAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>();
     private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingData);
     private final SingleThreadedReadHandlerAnswer readHandler = new SingleThreadedReadHandlerAnswer(pendingData);
-    private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingData);
+    private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(new PendingMessages(pendingData));
 
     public final void handle(Selector selector) throws IOException {
         while (true) {
