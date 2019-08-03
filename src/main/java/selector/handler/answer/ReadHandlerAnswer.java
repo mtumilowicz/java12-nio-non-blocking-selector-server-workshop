@@ -22,7 +22,7 @@ abstract class ReadHandlerAnswer {
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
             int bytesRead = read(key, buf);
             if (bytesRead > 0) {
-                prepareForSendToClient2(key, buf);
+                prepareConnectionForWriting(key, buf);
             }
             closeClientIfEnd(bytesRead, key);
         }
@@ -30,7 +30,7 @@ abstract class ReadHandlerAnswer {
 
     abstract void switchToWrite(SelectionKey key);
 
-    abstract void prepareForSendToClient2(SelectionKey key, ByteBuffer buf);
+    abstract void prepareConnectionForWriting(SelectionKey key, ByteBuffer buf);
 
     private int read(SelectionKey key, ByteBuffer buf) throws IOException {
         SocketChannel client = (SocketChannel) key.channel();
@@ -38,11 +38,23 @@ abstract class ReadHandlerAnswer {
         return client.read(buf);
     }
 
-    void prepareForSendToClient(SelectionKey key, ByteBuffer buf) {
-        SocketChannel client = (SocketChannel) key.channel();
+    void prepareForSendingToClient(SelectionKey key, ByteBuffer buf) {
+        prepareBuffer(buf);
+        queueBuffer(key, buf);
+        prepareKey(key);
+    }
+
+    void prepareBuffer(ByteBuffer buf) {
         buf.flip();
         BufferTransformer.transformBytes(buf, UnaryOperator.identity());
+    }
+
+    void queueBuffer(SelectionKey key, ByteBuffer buf) {
+        SocketChannel client = (SocketChannel) key.channel();
         pendingData.get(client).add(buf);
+    }
+
+    void prepareKey(SelectionKey key) {
         switchToWrite(key);
     }
 

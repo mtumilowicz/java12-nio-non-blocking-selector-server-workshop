@@ -26,9 +26,9 @@ class PooledReadHandlerAnswer extends ReadHandlerAnswer {
     }
 
     @Override
-    void prepareForSendToClient2(SelectionKey key, ByteBuffer buf) {
+    void prepareConnectionForWriting(SelectionKey key, ByteBuffer buf) {
         pool.submit(() -> {
-            prepareForSendToClient(key, buf);
+            prepareForSendingToClient(key, buf);
         });
     }
 }
