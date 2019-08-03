@@ -26,10 +26,9 @@ class PooledReadHandlerAnswer {
 
     void handle(SelectionKey key) throws IOException {
         if (canBeRead(key)) {
-            SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
-            int bytesRead = read(key, client, buf);
-            closeClientIfEnd(bytesRead, client);
+            int bytesRead = read(key, buf);
+            closeClientIfEnd(bytesRead, key);
         }
     }
 
@@ -41,7 +40,8 @@ class PooledReadHandlerAnswer {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
-    private int read(SelectionKey key, SocketChannel client, ByteBuffer buf) throws IOException {
+    private int read(SelectionKey key, ByteBuffer buf) throws IOException {
+        SocketChannel client = (SocketChannel) key.channel();
         int read = client.read(buf);
         if (read > 0) {
             pool.submit(() -> {
@@ -56,8 +56,9 @@ class PooledReadHandlerAnswer {
         return read;
     }
 
-    private void closeClientIfEnd(int read, SocketChannel client) throws IOException {
+    private void closeClientIfEnd(int read, SelectionKey key) throws IOException {
         if (read == -1) {
+            SocketChannel client = (SocketChannel) key.channel();
             pendingData.remove(client);
             client.close();
         }
