@@ -1,24 +1,24 @@
 package selector.server;
 
-import selector.handler.SelectorKeysHandler;
-import server.XNBServer;
+import selector.handler.SelectorKeysHandlerAnswer;
+import server.XNBServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;
 
-public class SingleThreadedSelectorNonBlockingServer extends XNBServer {
+public class SingleThreadedSelectorNonBlockingServerAnswer extends XNBServerAnswer {
 
-    public SingleThreadedSelectorNonBlockingServer(int port) {
+    public SingleThreadedSelectorNonBlockingServerAnswer(int port) {
         super(port);
     }
 
     @Override
     protected void handleConnections(Selector selector) throws IOException {
-        new SelectorKeysHandler().handle(selector);
+        new SelectorKeysHandlerAnswer().handle(selector);
     }
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedSelectorNonBlockingServer(81).start();
+        new SingleThreadedSelectorNonBlockingServerAnswer(81).start();
     }
 
     private void log(String message) {

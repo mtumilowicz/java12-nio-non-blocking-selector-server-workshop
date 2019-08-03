@@ -6,10 +6,10 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-class WriteHandler {
+class WriteHandlerAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-    WriteHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    WriteHandlerAnswer(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingData = pendingData;
     }
 

@@ -1,7 +1,7 @@
 package selector
 
 import client.TestClient
-import selector.server.SelectorNonBlockingServerWithWorkerPool
+import selector.server.SelectorNonBlockingServerWithWorkerPoolAnswer
 import spock.lang.Specification
 
 /**
@@ -16,7 +16,7 @@ class SelectorNonBlockingServerWithWorkerPoolTest extends Specification {
         def port = 2
 
         expect:
-        expectedClientOutput == extractClientOutputFor(port, new SelectorNonBlockingServerWithWorkerPool(port))
+        expectedClientOutput == extractClientOutputFor(port, new SelectorNonBlockingServerWithWorkerPoolAnswer(port))
     }
     
     def extractClientOutputFor(port, server) {

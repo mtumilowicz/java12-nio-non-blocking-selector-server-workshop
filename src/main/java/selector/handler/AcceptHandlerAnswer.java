@@ -6,10 +6,10 @@ import java.nio.channels.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-class AcceptHandler {
+class AcceptHandlerAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-    AcceptHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    AcceptHandlerAnswer(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingData = pendingData;
     }
 

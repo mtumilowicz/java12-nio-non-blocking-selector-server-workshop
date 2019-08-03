@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.function.UnaryOperator;
 
-class ReadHandler {
+class ReadHandlerAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
 
-    ReadHandler(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    ReadHandlerAnswer(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingData = pendingData;
     }
 

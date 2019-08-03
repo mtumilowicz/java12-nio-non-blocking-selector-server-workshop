@@ -11,14 +11,14 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.function.UnaryOperator;
 
-class PooledReadHandler {
+class PooledReadHandlerAnswer {
     private final ExecutorService pool;
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
     private final Queue<Runnable> selectorActions;
 
-    PooledReadHandler(ExecutorService pool,
-                      Map<SocketChannel, Queue<ByteBuffer>> pendingData,
-                      Queue<Runnable> selectorActions) {
+    PooledReadHandlerAnswer(ExecutorService pool,
+                            Map<SocketChannel, Queue<ByteBuffer>> pendingData,
+                            Queue<Runnable> selectorActions) {
         this.pool = pool;
         this.pendingData = pendingData;
         this.selectorActions = selectorActions;

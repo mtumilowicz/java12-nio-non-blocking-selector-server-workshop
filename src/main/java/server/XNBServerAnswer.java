@@ -8,8 +8,8 @@ import java.nio.channels.ServerSocketChannel;
 /**
  * Created by mtumilowicz on 2019-07-31.
  */
-public abstract class XNBServer extends NonBlockingServerAnswer {
-    public XNBServer(int port) {
+public abstract class XNBServerAnswer extends NonBlockingServerAnswer {
+    public XNBServerAnswer(int port) {
         super(port);
     }
 

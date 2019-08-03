@@ -13,11 +13,11 @@ import java.util.Set;
 /**
  * Created by mtumilowicz on 2019-07-26.
  */
-public class SelectorKeysHandler {
+public class SelectorKeysHandlerAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new HashMap<>();
-    private final AcceptHandler acceptHandler = new AcceptHandler(pendingData);
-    private final ReadHandler readHandler = new ReadHandler(pendingData);
-    private final WriteHandler writeHandler = new WriteHandler(pendingData);
+    private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingData);
+    private final ReadHandlerAnswer readHandler = new ReadHandlerAnswer(pendingData);
+    private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingData);
 
     public final void handle(Selector selector) throws IOException {
         while (true) {

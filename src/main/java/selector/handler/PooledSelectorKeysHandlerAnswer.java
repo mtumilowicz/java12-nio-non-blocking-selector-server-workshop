@@ -16,13 +16,13 @@ import java.util.concurrent.Executors;
 /**
  * Created by mtumilowicz on 2019-07-30.
  */
-public class PooledSelectorKeysHandler {
+public class PooledSelectorKeysHandlerAnswer {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new ConcurrentHashMap<>();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
-    private final AcceptHandler acceptHandler = new AcceptHandler(pendingData);
-    private final PooledReadHandler readHandler = new PooledReadHandler(pool, pendingData, selectorActions);
-    private final WriteHandler writeHandler = new WriteHandler(pendingData);
+    private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingData);
+    private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, pendingData, selectorActions);
+    private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingData);
 
     public void handle(Selector selector) throws IOException {
         while (true) {
