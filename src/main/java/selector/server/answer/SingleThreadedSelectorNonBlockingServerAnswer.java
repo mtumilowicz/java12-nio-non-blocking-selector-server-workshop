@@ -1,4 +1,4 @@
-package selector.server;
+package selector.server.answer;
 
 import selector.handler.answer.SelectorKeysHandlerAnswer;
 import server.XNBServerAnswer;

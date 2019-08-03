@@ -1,4 +1,4 @@
-package selector.server;
+package selector.server.workshop;
 
 import selector.handler.answer.PooledSelectorKeysHandlerAnswer;
 import server.XNBServerAnswer;
@@ -6,9 +6,9 @@ import server.XNBServerAnswer;
 import java.io.IOException;
 import java.nio.channels.Selector;
 
-public class SelectorNonBlockingServerWithWorkerPoolAnswer extends XNBServerAnswer {
+public class SelectorNonBlockingServerWithWorkerPoolWorkshop extends XNBServerAnswer {
 
-    public SelectorNonBlockingServerWithWorkerPoolAnswer(int port) {
+    public SelectorNonBlockingServerWithWorkerPoolWorkshop(int port) {
         super(port);
     }
 
@@ -19,7 +19,7 @@ public class SelectorNonBlockingServerWithWorkerPoolAnswer extends XNBServerAnsw
     }
 
     public static void main(String[] args) throws IOException {
-        new SelectorNonBlockingServerWithWorkerPoolAnswer(81).start();
+        new SelectorNonBlockingServerWithWorkerPoolWorkshop(81).start();
     }
 
     private void log(String message) {
