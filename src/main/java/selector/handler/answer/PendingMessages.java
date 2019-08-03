@@ -6,15 +6,15 @@ import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.Queue;
 
-class QueuedBuffers {
-    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
+class PendingMessages {
+    private final Map<SocketChannel, Queue<ByteBuffer>> pendingMessagesByClient;
 
-    QueuedBuffers(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-        this.pendingData = pendingData;
+    PendingMessages(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+        this.pendingMessagesByClient = pendingData;
     }
 
     void sendTo(SocketChannel client) throws IOException {
-        var buffersToWrite = pendingData.get(client);
+        var buffersToWrite = pendingMessagesByClient.get(client);
         while (!buffersToWrite.isEmpty()) {
             ByteBuffer buf = buffersToWrite.poll();
             int bytesWritten = client.write(buf);
@@ -25,7 +25,7 @@ class QueuedBuffers {
     }
 
     private void closeClientIfEnd(SocketChannel client) throws IOException {
-        pendingData.remove(client);
+        pendingMessagesByClient.remove(client);
         client.close();
     }
 }
