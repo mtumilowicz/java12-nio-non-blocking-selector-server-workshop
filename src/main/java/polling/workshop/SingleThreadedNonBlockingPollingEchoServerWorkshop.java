@@ -1,6 +1,5 @@
-package polling;
+package polling.workshop;
 
-import server.NonBlockingServerAnswer;
 import server.NonBlockingServerWorkshop;
 
 import java.io.IOException;
@@ -23,7 +22,7 @@ public class SingleThreadedNonBlockingPollingEchoServerWorkshop extends NonBlock
 
     @Override
     protected void processSockets(ServerSocketChannel ssc) throws IOException {
-        var clients = new SocketChannelsAnswer();
+        var clients = new SocketChannelsWorkshop();
         // spinning loop, hint: while(true)
         // accept connection and add to clients, hint: acceptConnection, ifPresent
         // handle connected, hint: client.handleConnected()

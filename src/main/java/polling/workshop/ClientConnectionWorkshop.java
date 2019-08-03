@@ -1,4 +1,4 @@
-package polling;
+package polling.workshop;
 
 import transformer.BufferTransformer;
 

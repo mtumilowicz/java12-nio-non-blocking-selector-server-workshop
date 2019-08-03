@@ -1,7 +1,6 @@
-package polling
+package polling.answer
 
 import client.TestClient
-import polling.SingleThreadedNonBlockingPollingEchoServerAnswer
 import spock.lang.Specification
 
 /**

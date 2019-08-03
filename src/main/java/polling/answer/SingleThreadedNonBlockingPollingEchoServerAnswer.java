@@ -1,4 +1,4 @@
-package polling;
+package polling.answer;
 
 import server.NonBlockingServerAnswer;
 
