@@ -18,7 +18,7 @@ class SingleThreadedReadHandlerAnswer extends ReadHandlerAnswer {
     }
 
     @Override
-    void write(SelectionKey key, ByteBuffer buf) {
-        writeToBuffer(key, buf);
+    void prepareForSendToClient2(SelectionKey key, ByteBuffer buf) {
+        prepareForSendToClient(key, buf);
     }
 }
