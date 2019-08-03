@@ -44,8 +44,7 @@ public class PooledSelectorKeysHandlerAnswer {
             acceptHandler.handle(key);
             readHandler.handle(key);
             writeHandler.handle(key);
-        } catch (
-                Exception ex) {
+        } catch (Exception ex) {
             // workshops
         }
     }

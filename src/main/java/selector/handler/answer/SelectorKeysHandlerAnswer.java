@@ -33,8 +33,7 @@ public class SelectorKeysHandlerAnswer {
             acceptHandler.handle(key);
             readHandler.handle(key);
             writeHandler.handle(key);
-        } catch (
-                Exception ex) {
+        } catch (Exception ex) {
             // workshops
         }
     }
