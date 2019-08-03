@@ -1,5 +1,7 @@
 package selector.handler.answer;
 
+import transformer.BufferTransformer;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.UnaryOperator;
 
 class PendingMessages {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingMessagesByClient;
@@ -28,10 +31,6 @@ class PendingMessages {
         pendingMessagesByClient.put(client, new ConcurrentLinkedQueue<>());
     }
 
-    void addFor(SocketChannel client, ByteBuffer buf) {
-        pendingMessagesByClient.get(client).add(buf);
-    }
-
     void sendTo(SocketChannel client) throws IOException {
         var buffersToWrite = pendingMessagesByClient.get(client);
         while (!buffersToWrite.isEmpty()) {
@@ -46,5 +45,15 @@ class PendingMessages {
     void closeClientIfEnd(SocketChannel client) throws IOException {
         pendingMessagesByClient.remove(client);
         client.close();
+    }
+
+    void prepareForSendingTo(SocketChannel client, ByteBuffer buffer) {
+        prepareBuffer(buffer);
+        pendingMessagesByClient.get(client).add(buffer);
+    }
+
+    private void prepareBuffer(ByteBuffer buf) {
+        buf.flip();
+        BufferTransformer.transformBytes(buf, UnaryOperator.identity());
     }
 }

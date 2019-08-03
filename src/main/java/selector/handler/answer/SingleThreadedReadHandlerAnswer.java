@@ -1,6 +1,5 @@
 package selector.handler.answer;
 
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 
 class SingleThreadedReadHandlerAnswer extends ReadHandlerAnswer {
@@ -15,7 +14,9 @@ class SingleThreadedReadHandlerAnswer extends ReadHandlerAnswer {
     }
 
     @Override
-    void prepareConnectionForWriting(SelectionKey key, ByteBuffer buf) {
-        prepareForSendingToClient(key, buf);
+    void handleIncomingMessage(Runnable prepareForSending, Runnable switchToWrite) {
+        prepareForSending.run();
+        switchToWrite.run();
     }
+
 }

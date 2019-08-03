@@ -1,6 +1,5 @@
 package selector.handler.answer;
 
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -24,7 +23,11 @@ class PooledReadHandlerAnswer extends ReadHandlerAnswer {
     }
 
     @Override
-    void prepareConnectionForWriting(SelectionKey key, ByteBuffer buf) {
-        pool.submit(() -> prepareForSendingToClient(key, buf));
+    void handleIncomingMessage(Runnable prepareForSending, Runnable switchToWrite) {
+        pool.submit(() -> {
+            prepareForSending.run();
+            switchToWrite.run();
+        });
     }
+
 }
