@@ -14,7 +14,7 @@ import static java.util.Objects.nonNull;
  */
 public class SingleThreadedNonBlockingPollingEchoServerWorkshop extends XServer {
 
-    public SingleThreadedNonBlockingPollingEchoServerWorkshop(int port) {
+    private SingleThreadedNonBlockingPollingEchoServerWorkshop(int port) {
         super(port);
     }
 
@@ -32,13 +32,13 @@ public class SingleThreadedNonBlockingPollingEchoServerWorkshop extends XServer 
     }
 
     private Optional<SocketChannel> acceptConnection(ServerSocketChannel ssc) throws IOException {
-        SocketChannel newSocket = ssc.accept();
-        if (nonNull(newSocket)) {
-            log("Connected to " + newSocket);
-            newSocket.configureBlocking(false);
-        }
+        // accept connection, hint: ssc.accept()
+        // observation: never blocking, nearly always null
+        // if not null - configure to be non blocking, hint: configureBlocking(false)
+        // if not null - log("Connected to " + newSocket);
+        // return socket channel wrapped in optional
 
-        return Optional.ofNullable(newSocket);
+        return Optional.empty();
     }
 
     private void log(String message) {
