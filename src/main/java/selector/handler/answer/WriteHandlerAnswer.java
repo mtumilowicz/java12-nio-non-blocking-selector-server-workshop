@@ -17,17 +17,23 @@ class WriteHandlerAnswer {
         if (canBeWritten(key)) {
             SocketChannel client = (SocketChannel) key.channel();
             Queue<ByteBuffer> buffersToWrite = pendingData.get(client);
-            while (!buffersToWrite.isEmpty()) {
-                ByteBuffer buf = buffersToWrite.peek();
-                int bytesWritten = client.write(buf);
-                if (bytesWritten == -1) {
-                    closeClientIfEnd(client);
-                    return;
-                }
-                buffersToWrite.remove();
-            }
-            key.interestOps(SelectionKey.OP_READ);
+            processBuffers(client, buffersToWrite);
+            switchToRead(key);
         }
+    }
+
+    private void processBuffers(SocketChannel client, Queue<ByteBuffer> buffersToWrite) throws IOException {
+        while (!buffersToWrite.isEmpty()) {
+            ByteBuffer buf = buffersToWrite.poll();
+            int bytesWritten = client.write(buf);
+            if (bytesWritten == -1) {
+                closeClientIfEnd(client);
+            }
+        }
+    }
+
+    void switchToRead(SelectionKey key) {
+        key.interestOps(SelectionKey.OP_READ);
     }
 
     private void closeClientIfEnd(SocketChannel client) throws IOException {
