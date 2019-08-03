@@ -17,7 +17,7 @@ class AcceptHandler {
         if (canBeAccepted(key)) {
             ServerSocketChannel channel = (ServerSocketChannel) key.channel();
             SocketChannel client = channel.accept(); // never null, nonblocking
-            System.out.println("Client connected: " + client);
+            log("Client connected: " + client);
             client.configureBlocking(false);
             pendingData.put(client, new ConcurrentLinkedQueue<>());
             client.register(key.selector(), SelectionKey.OP_READ);
@@ -26,5 +26,9 @@ class AcceptHandler {
 
     private boolean canBeAccepted(SelectionKey key) {
         return key.isValid() && key.isAcceptable();
+    }
+
+    private void log(String message) {
+        System.out.println(message);
     }
 }
