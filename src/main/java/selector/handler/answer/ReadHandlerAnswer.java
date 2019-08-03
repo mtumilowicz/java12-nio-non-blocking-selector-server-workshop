@@ -23,13 +23,13 @@ class ReadHandlerAnswer {
             SocketChannel client = (SocketChannel) key.channel();
             int bytesRead = read(client, buf);
             if (bytesRead > 0) {
-                switchToWrite(bytesRead, key);
+                switchToWrite(key);
             }
             closeClientIfEnd(bytesRead, client);
         }
     }
 
-    private void switchToWrite(int bytesRead, SelectionKey key) {
+    private void switchToWrite(SelectionKey key) {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
