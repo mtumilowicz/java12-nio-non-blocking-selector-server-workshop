@@ -3,14 +3,29 @@ package selector.handler.answer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 class PendingMessages {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingMessagesByClient;
 
-    PendingMessages(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    private PendingMessages(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingMessagesByClient = pendingData;
+    }
+
+    static PendingMessages multithreaded() {
+        return new PendingMessages(new ConcurrentHashMap<>());
+    }
+
+    static PendingMessages singleThreaded() {
+        return new PendingMessages(new HashMap<>());
+    }
+
+    void initFor(SocketChannel client) {
+        pendingMessagesByClient.put(client, new ConcurrentLinkedQueue<>());
     }
 
     void addFor(SocketChannel client, ByteBuffer buf) {

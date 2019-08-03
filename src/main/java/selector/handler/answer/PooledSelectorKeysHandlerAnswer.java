@@ -1,14 +1,10 @@
 package selector.handler.answer;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,11 +14,11 @@ import java.util.concurrent.Executors;
  */
 public class PooledSelectorKeysHandlerAnswer {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
-    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData = new ConcurrentHashMap<>();
+    private final PendingMessages pendingMessages = PendingMessages.multithreaded();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
-    private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingData);
-    private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, new PendingMessages(pendingData), selectorActions);
-    private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(new PendingMessages(pendingData));
+    private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingMessages);
+    private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, pendingMessages, selectorActions);
+    private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingMessages);
 
     public void handle(Selector selector) throws IOException {
         while (true) {

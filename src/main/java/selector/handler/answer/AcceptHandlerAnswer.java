@@ -1,16 +1,15 @@
 package selector.handler.answer;
 
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.IOException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 
 class AcceptHandlerAnswer {
-    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
+    private final PendingMessages pendingMessages;
 
-    AcceptHandlerAnswer(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-        this.pendingData = pendingData;
+    AcceptHandlerAnswer(PendingMessages pendingMessages) {
+        this.pendingMessages = pendingMessages;
     }
 
     void handle(SelectionKey key) throws IOException {
@@ -19,7 +18,7 @@ class AcceptHandlerAnswer {
             SocketChannel client = channel.accept(); // never null, nonblocking
             log("Client connected: " + client);
             client.configureBlocking(false);
-            pendingData.put(client, new ConcurrentLinkedQueue<>());
+            pendingMessages.initFor(client);
             client.register(key.selector(), SelectionKey.OP_READ);
         }
     }
