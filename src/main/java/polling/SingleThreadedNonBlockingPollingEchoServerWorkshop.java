@@ -1,18 +1,17 @@
 package polling;
 
-import server.XServer;
+import server.NonBlockingServerAnswer;
+import server.NonBlockingServerWorkshop;
 
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Optional;
 
-import static java.util.Objects.nonNull;
-
 /**
  * Created by mtumilowicz on 2019-07-21.
  */
-public class SingleThreadedNonBlockingPollingEchoServerWorkshop extends XServer {
+public class SingleThreadedNonBlockingPollingEchoServerWorkshop extends NonBlockingServerWorkshop {
 
     private SingleThreadedNonBlockingPollingEchoServerWorkshop(int port) {
         super(port);

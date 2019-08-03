@@ -1,6 +1,6 @@
 package polling;
 
-import server.XServer;
+import server.NonBlockingServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
@@ -12,7 +12,7 @@ import static java.util.Objects.nonNull;
 /**
  * Created by mtumilowicz on 2019-07-21.
  */
-public class SingleThreadedNonBlockingPollingEchoServerAnswer extends XServer {
+public class SingleThreadedNonBlockingPollingEchoServerAnswer extends NonBlockingServerAnswer {
 
     public SingleThreadedNonBlockingPollingEchoServerAnswer(int port) {
         super(port);
