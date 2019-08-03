@@ -20,12 +20,8 @@ class ReadHandlerAnswer {
     void handle(SelectionKey key) throws IOException {
         if (canBeRead(key)) {
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
-            SocketChannel client = (SocketChannel) key.channel();
-            int bytesRead = read(client, buf);
-            if (bytesRead > 0) {
-                switchToWrite(key);
-            }
-            closeClientIfEnd(bytesRead, client);
+            int bytesRead = read(key, buf);
+            closeIfEnd(bytesRead, key);
         }
     }
 
@@ -33,19 +29,22 @@ class ReadHandlerAnswer {
         key.interestOps(SelectionKey.OP_WRITE);
     }
 
-    private int read(SocketChannel client, ByteBuffer buf) throws IOException {
+    private int read(SelectionKey key, ByteBuffer buf) throws IOException {
+        SocketChannel client = (SocketChannel) key.channel();
         int read = client.read(buf);
         if (read > 0) {
             buf.flip();
             BufferTransformer.transformBytes(buf, UnaryOperator.identity());
             pendingData.get(client).add(buf);
+            switchToWrite(key);
         }
 
         return read;
     }
 
-    private void closeClientIfEnd(int read, SocketChannel client) throws IOException {
+    private void closeIfEnd(int read, SelectionKey key) throws IOException {
         if (read == -1) {
+            SocketChannel client = (SocketChannel) key.channel();
             pendingData.remove(client);
             client.close();
         }
