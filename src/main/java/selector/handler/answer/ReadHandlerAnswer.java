@@ -18,7 +18,7 @@ class ReadHandlerAnswer {
     }
 
     void handle(SelectionKey key) throws IOException {
-        if (key.isValid() && key.isReadable()) {
+        if (canBeRead(key)) {
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
             SocketChannel client = (SocketChannel) key.channel();
             int bytesRead = read(client, buf);
@@ -49,5 +49,9 @@ class ReadHandlerAnswer {
             pendingData.remove(client);
             client.close();
         }
+    }
+
+    private boolean canBeRead(SelectionKey key) {
+        return key.isValid() && key.isReadable();
     }
 }

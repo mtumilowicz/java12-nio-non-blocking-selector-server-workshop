@@ -25,7 +25,7 @@ class PooledReadHandlerAnswer {
     }
 
     void handle(SelectionKey key) throws IOException {
-        if (key.isValid() && key.isReadable()) {
+        if (canBeRead(key)) {
             SocketChannel sc = (SocketChannel) key.channel();
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
             int read = sc.read(buf);
@@ -43,5 +43,9 @@ class PooledReadHandlerAnswer {
                 });
             }
         }
+    }
+
+    private boolean canBeRead(SelectionKey key) {
+        return key.isValid() && key.isReadable();
     }
 }

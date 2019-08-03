@@ -14,7 +14,7 @@ class WriteHandlerAnswer {
     }
 
     void handle(SelectionKey key) throws IOException {
-        if (key.isValid() && key.isWritable()) {
+        if (canBeWritten(key)) {
             SocketChannel client = (SocketChannel) key.channel();
             Queue<ByteBuffer> buffersToWrite = pendingData.get(client);
             while (!buffersToWrite.isEmpty()) {
@@ -34,4 +34,9 @@ class WriteHandlerAnswer {
             pendingData.remove(client);
             client.close();
     }
+
+    private boolean canBeWritten(SelectionKey key) {
+        return key.isValid() && key.isWritable();
+    }
+
 }
