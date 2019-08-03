@@ -31,8 +31,8 @@ class WriteHandlerAnswer {
     }
 
     private void closeClientIfEnd(SocketChannel client) throws IOException {
-            pendingData.remove(client);
-            client.close();
+        pendingData.remove(client);
+        client.close();
     }
 
     private boolean canBeWritten(SelectionKey key) {
