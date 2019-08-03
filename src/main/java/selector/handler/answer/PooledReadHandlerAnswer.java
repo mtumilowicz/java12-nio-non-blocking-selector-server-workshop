@@ -32,12 +32,9 @@ class PooledReadHandlerAnswer {
         }
     }
 
-    private void wakeupSelector(SelectionKey key) {
-        key.selector().wakeup();
-    }
-
     private void switchToWrite(SelectionKey key) {
-        key.interestOps(SelectionKey.OP_WRITE);
+        selectorActions.add(() -> key.interestOps(SelectionKey.OP_WRITE));
+        key.selector().wakeup();
     }
 
     private int read(SelectionKey key, ByteBuffer buf) throws IOException {
@@ -45,15 +42,19 @@ class PooledReadHandlerAnswer {
         int read = client.read(buf);
         if (read > 0) {
             pool.submit(() -> {
-                buf.flip();
-                BufferTransformer.transformBytes(buf, UnaryOperator.identity());
-                pendingData.get(client).add(buf);
-                selectorActions.add(() -> this.switchToWrite(key));
-                wakeupSelector(key);
+                writeToBuffer(key, buf);
             });
         }
 
         return read;
+    }
+
+    private void writeToBuffer(SelectionKey key, ByteBuffer buf) {
+        SocketChannel client = (SocketChannel) key.channel();
+        buf.flip();
+        BufferTransformer.transformBytes(buf, UnaryOperator.identity());
+        pendingData.get(client).add(buf);
+        switchToWrite(key);
     }
 
     private void closeClientIfEnd(int read, SelectionKey key) throws IOException {

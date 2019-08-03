@@ -11,7 +11,7 @@ class SelectorNonBlockingServerWithWorkerPoolTest extends Specification {
 
     def expectedClientOutput = ["send: xxx", "received: xxx"]
 
-    def "SingleThreadedPollingNonBlockingServerAnswer"() {
+    def "SelectorNonBlockingServerWithWorkerPoolAnswer"() {
         given:
         def port = 2
 

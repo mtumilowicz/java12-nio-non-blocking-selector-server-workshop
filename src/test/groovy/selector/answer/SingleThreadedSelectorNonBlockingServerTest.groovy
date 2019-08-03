@@ -11,7 +11,7 @@ class SingleThreadedSelectorNonBlockingServerTest extends Specification {
 
     def expectedClientOutput = ["send: xxx", "received: xxx"]
 
-    def "SingleThreadedPollingNonBlockingServerAnswer"() {
+    def "SingleThreadedSelectorNonBlockingServerAnswer"() {
         given:
         def port = 3
 
