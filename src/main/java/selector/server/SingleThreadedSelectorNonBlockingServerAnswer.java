@@ -1,6 +1,6 @@
 package selector.server;
 
-import selector.handler.SelectorKeysHandlerAnswer;
+import selector.handler.answer.SelectorKeysHandlerAnswer;
 import server.XNBServerAnswer;
 
 import java.io.IOException;
