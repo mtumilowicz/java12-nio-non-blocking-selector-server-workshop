@@ -1,16 +1,18 @@
 package handler.answer;
 
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
+import java.nio.channels.SocketChannel;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
-class PooledIncomingMessageAnswer extends IncomingMessageAnswer {
+class ThreadPooledIncomingMessageAnswer extends IncomingMessageAnswer {
     private final ExecutorService pool;
     private final Queue<Runnable> selectorActions;
 
-    PooledIncomingMessageAnswer(ExecutorService pool,
-                                PendingMessagesAnswer pendingMessages,
-                                Queue<Runnable> selectorActions) {
+    ThreadPooledIncomingMessageAnswer(ExecutorService pool,
+                                      PendingMessagesAnswer pendingMessages,
+                                      Queue<Runnable> selectorActions) {
         super(pendingMessages);
         this.pool = pool;
         this.selectorActions = selectorActions;
@@ -23,11 +25,7 @@ class PooledIncomingMessageAnswer extends IncomingMessageAnswer {
     }
 
     @Override
-    void handleIncomingMessage(Runnable prepareForSending, Runnable switchToWrite) {
-        pool.submit(() -> {
-            prepareForSending.run();
-            switchToWrite.run();
-        });
+    void handleIncomingMessage(SocketChannel client, ByteBuffer buffer, SelectionKey key) {
+        pool.submit(() -> super.handleIncomingMessage(client, buffer, key));
     }
-
 }

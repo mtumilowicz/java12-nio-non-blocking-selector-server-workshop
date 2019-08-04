@@ -12,11 +12,4 @@ class SingleThreadedIncomingMessageAnswer extends IncomingMessageAnswer {
     void switchToWrite(SelectionKey key) {
         key.interestOps(SelectionKey.OP_WRITE);
     }
-
-    @Override
-    void handleIncomingMessage(Runnable prepareForSending, Runnable switchToWrite) {
-        prepareForSending.run();
-        switchToWrite.run();
-    }
-
 }

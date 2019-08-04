@@ -17,7 +17,7 @@ public class PooledSelectorKeysHandlerAnswer {
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
     private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
-    private final PooledIncomingMessageAnswer incomingMessage = new PooledIncomingMessageAnswer(pool, pendingMessages, selectorActions);
+    private final ThreadPooledIncomingMessageAnswer incomingMessage = new ThreadPooledIncomingMessageAnswer(pool, pendingMessages, selectorActions);
     private final OutgoingMessageAnswer outgoingMessage = new OutgoingMessageAnswer(pendingMessages);
 
     public void handle(Selector selector) throws IOException {

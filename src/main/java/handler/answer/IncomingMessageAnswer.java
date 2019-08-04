@@ -18,9 +18,7 @@ abstract class IncomingMessageAnswer {
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
             int bytesRead = client.read(buf);
             if (bytesRead > 0) {
-                handleIncomingMessage(
-                        () -> pendingMessages.prepareForSendingTo(client, buf),
-                        () -> switchToWrite(key));
+                handleIncomingMessage(client, buf, key);
             }
             if (bytesRead == -1) {
                 pendingMessages.closeClientIfEnd(client);
@@ -30,7 +28,10 @@ abstract class IncomingMessageAnswer {
 
     abstract void switchToWrite(SelectionKey key);
 
-    abstract void handleIncomingMessage(Runnable prepareForSending, Runnable switchToWrite);
+    void handleIncomingMessage(SocketChannel client, ByteBuffer buffer, SelectionKey key) {
+        pendingMessages.prepareForSendingTo(client, buffer);
+        switchToWrite(key);
+    }
 
     private boolean canBeRead(SelectionKey key) {
         return key.isValid() && key.isReadable();
