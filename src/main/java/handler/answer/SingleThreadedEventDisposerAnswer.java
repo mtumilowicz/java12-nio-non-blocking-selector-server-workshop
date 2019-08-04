@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by mtumilowicz on 2019-07-26.
  */
-public class SelectorKeysHandlerAnswer {
+public class SingleThreadedEventDisposerAnswer {
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
     private final SingleThreadedIncomingMessageAnswer incomingMessage = new SingleThreadedIncomingMessageAnswer(pendingMessages);
