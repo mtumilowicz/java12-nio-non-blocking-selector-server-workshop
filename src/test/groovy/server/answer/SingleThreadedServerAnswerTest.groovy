@@ -15,7 +15,7 @@ class SingleThreadedServerAnswerTest extends Specification {
         def port = 3
 
         expect:
-        expectedClientOutput == extractClientOutputFor(port, new SIngleThreadedServerAnswer(port))
+        expectedClientOutput == extractClientOutputFor(port, new SingleThreadedServerAnswer(port))
     }
     
     def extractClientOutputFor(port, server) {
