@@ -1,14 +1,14 @@
-package selector.handler.answer;
+package selector.handler.workshop;
 
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-class WriteHandlerAnswer {
-    private final PendingMessagesAnswer pendingMessages;
+class WriteHandlerWorkshop {
+    private final PendingMessagesWorkshop pendingMessages;
 
-    WriteHandlerAnswer(PendingMessagesAnswer pendingMessages) {
+    WriteHandlerWorkshop(PendingMessagesWorkshop pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 
@@ -23,5 +23,4 @@ class WriteHandlerAnswer {
     private boolean canBeWritten(SelectionKey key) {
         return key.isValid() && key.isWritable();
     }
-
 }
