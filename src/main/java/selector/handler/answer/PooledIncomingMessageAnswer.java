@@ -4,13 +4,13 @@ import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
-class PooledReadHandlerAnswer extends ReadHandlerAnswer {
+class PooledIncomingMessageAnswer extends IncomingMessageAnswer {
     private final ExecutorService pool;
     private final Queue<Runnable> selectorActions;
 
-    PooledReadHandlerAnswer(ExecutorService pool,
-                            PendingMessagesAnswer pendingMessages,
-                            Queue<Runnable> selectorActions) {
+    PooledIncomingMessageAnswer(ExecutorService pool,
+                                PendingMessagesAnswer pendingMessages,
+                                Queue<Runnable> selectorActions) {
         super(pendingMessages);
         this.pool = pool;
         this.selectorActions = selectorActions;

@@ -11,7 +11,7 @@ import java.util.Set;
 public class SelectorKeysHandlerAnswer {
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
-    private final SingleThreadedReadHandlerAnswer readHandler = new SingleThreadedReadHandlerAnswer(pendingMessages);
+    private final SingleThreadedIncomingMessageAnswer incomingMessage = new SingleThreadedIncomingMessageAnswer(pendingMessages);
     private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingMessages);
 
     public final void handle(Selector selector) throws IOException {
@@ -26,7 +26,7 @@ public class SelectorKeysHandlerAnswer {
     private void handleKey(SelectionKey key) {
         try {
             clientConnection.tryAccept(key);
-            readHandler.handle(key);
+            incomingMessage.tryReceive(key);
             writeHandler.handle(key);
         } catch (Exception ex) {
             // workshops

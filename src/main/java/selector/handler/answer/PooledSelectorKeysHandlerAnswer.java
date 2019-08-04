@@ -17,7 +17,7 @@ public class PooledSelectorKeysHandlerAnswer {
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
     private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
-    private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, pendingMessages, selectorActions);
+    private final PooledIncomingMessageAnswer incomingMessage = new PooledIncomingMessageAnswer(pool, pendingMessages, selectorActions);
     private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingMessages);
 
     public void handle(Selector selector) throws IOException {
@@ -38,7 +38,7 @@ public class PooledSelectorKeysHandlerAnswer {
     private void handleKey(SelectionKey key) {
         try {
             clientConnection.tryAccept(key);
-            readHandler.handle(key);
+            incomingMessage.tryReceive(key);
             writeHandler.handle(key);
         } catch (Exception ex) {
             // workshops

@@ -5,14 +5,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-abstract class ReadHandlerAnswer {
+abstract class IncomingMessageAnswer {
     private final PendingMessagesAnswer pendingMessages;
 
-    ReadHandlerAnswer(PendingMessagesAnswer pendingMessages) {
+    IncomingMessageAnswer(PendingMessagesAnswer pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 
-    void handle(SelectionKey key) throws IOException {
+    void tryReceive(SelectionKey key) throws IOException {
         if (canBeRead(key)) {
             SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buf = ByteBuffer.allocateDirect(80);
