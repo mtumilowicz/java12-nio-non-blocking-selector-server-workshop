@@ -1,7 +1,6 @@
 package selector.server.answer;
 
 import selector.handler.answer.SelectorKeysHandlerAnswer;
-import server.answer.NonBlockingServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;
