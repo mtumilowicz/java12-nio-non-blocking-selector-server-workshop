@@ -15,8 +15,9 @@ class WriteHandlerWorkshop {
     void handle(SelectionKey key) throws IOException {
         if (canBeWritten(key)) {
             // get client (SocketChannel) from key, hint: key.channel() + casting
-            SocketChannel client = (SocketChannel) key.channel();
+            SocketChannel client = null;
             pendingMessages.sendTo(client);
+            // switch key to listen to read again, hint: key.interestOps(...), OP_READ
             key.interestOps(SelectionKey.OP_READ);
         }
     }
