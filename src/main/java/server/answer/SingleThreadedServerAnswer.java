@@ -1,6 +1,6 @@
 package server.answer;
 
-import handler.answer.SingleThreadedEventDisposerAnswer;
+import handler.answer.SingleThreadedEventLoopAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;
@@ -13,7 +13,7 @@ public class SingleThreadedServerAnswer extends ServerAnswer {
 
     @Override
     protected void handleConnections(Selector selector) throws IOException {
-        new SingleThreadedEventDisposerAnswer().handle(selector);
+        new SingleThreadedEventLoopAnswer().handle(selector);
     }
 
     public static void main(String[] args) throws IOException {

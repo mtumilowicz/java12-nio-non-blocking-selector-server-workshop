@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by mtumilowicz on 2019-07-30.
  */
-public class ThreadPooledEventDisposerAnswer {
+public class ThreadPooledEventLoopAnswer {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();

@@ -1,6 +1,6 @@
 package server.answer;
 
-import handler.answer.ThreadPooledEventDisposerAnswer;
+import handler.answer.ThreadPooledEventLoopAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;
@@ -13,7 +13,7 @@ public class ThreadPoolServerAnswer extends ServerAnswer {
 
     @Override
     protected void handleConnections(Selector selector) throws IOException {
-        new ThreadPooledEventDisposerAnswer().handle(selector);
+        new ThreadPooledEventLoopAnswer().handle(selector);
     }
 
     public static void main(String[] args) throws IOException {
