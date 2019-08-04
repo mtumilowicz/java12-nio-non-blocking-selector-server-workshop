@@ -1,19 +1,14 @@
 package selector.handler.workshop;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 class AcceptHandlerWorkshop {
-    private final Map<SocketChannel, Queue<ByteBuffer>> pendingData;
+    private final PendingMessagesWorkshop pendingMessages;
 
-    AcceptHandlerWorkshop(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-        this.pendingData = pendingData;
+    AcceptHandlerWorkshop(PendingMessagesWorkshop pendingMessages) {
+        this.pendingMessages = pendingMessages;
     }
 
     void handle(SelectionKey key) throws IOException {
@@ -24,7 +19,7 @@ class AcceptHandlerWorkshop {
             SocketChannel client = null;
             log("Client connected: " + client);
             // switch client to be non blocking, hint: configureBlocking(false)
-            // insert placeholder queue for that client into pendingData
+            // init pending messages for that client, hint: pendingMessages.initFor(client)
             // hint: use ConcurrentLinkedQueue
             // register selector to listen for reads of that client
             // hint: client.register(..., SelectionKey.OP_READ), key.selector()
