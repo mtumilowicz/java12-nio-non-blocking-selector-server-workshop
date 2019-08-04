@@ -5,14 +5,14 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-class AcceptHandlerAnswer {
+class ClientConnectionAnswer {
     private final PendingMessagesAnswer pendingMessages;
 
-    AcceptHandlerAnswer(PendingMessagesAnswer pendingMessages) {
+    ClientConnectionAnswer(PendingMessagesAnswer pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 
-    void handle(SelectionKey key) throws IOException {
+    void tryAccept(SelectionKey key) throws IOException {
         if (canBeAccepted(key)) {
             ServerSocketChannel channel = (ServerSocketChannel) key.channel();
             SocketChannel client = channel.accept(); // never null, nonblocking

@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-class AcceptHandlerWorkshop {
+class ClientConnectionWorkshop {
     private final PendingMessagesWorkshop pendingMessages;
 
-    AcceptHandlerWorkshop(PendingMessagesWorkshop pendingMessages) {
+    ClientConnectionWorkshop(PendingMessagesWorkshop pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 

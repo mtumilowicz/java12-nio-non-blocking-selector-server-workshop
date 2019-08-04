@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class SelectorKeysHandlerAnswer {
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
-    private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingMessages);
+    private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
     private final SingleThreadedReadHandlerAnswer readHandler = new SingleThreadedReadHandlerAnswer(pendingMessages);
     private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingMessages);
 
@@ -25,7 +25,7 @@ public class SelectorKeysHandlerAnswer {
 
     private void handleKey(SelectionKey key) {
         try {
-            acceptHandler.handle(key);
+            clientConnection.tryAccept(key);
             readHandler.handle(key);
             writeHandler.handle(key);
         } catch (Exception ex) {

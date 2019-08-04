@@ -16,7 +16,7 @@ public class PooledSelectorKeysHandlerAnswer {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
-    private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingMessages);
+    private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
     private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, pendingMessages, selectorActions);
     private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingMessages);
 
@@ -37,7 +37,7 @@ public class PooledSelectorKeysHandlerAnswer {
 
     private void handleKey(SelectionKey key) {
         try {
-            acceptHandler.handle(key);
+            clientConnection.tryAccept(key);
             readHandler.handle(key);
             writeHandler.handle(key);
         } catch (Exception ex) {
