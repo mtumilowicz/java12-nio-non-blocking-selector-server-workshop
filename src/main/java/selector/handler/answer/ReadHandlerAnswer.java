@@ -6,9 +6,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 abstract class ReadHandlerAnswer {
-    private final PendingMessages pendingMessages;
+    private final PendingMessagesAnswer pendingMessages;
 
-    ReadHandlerAnswer(PendingMessages pendingMessages) {
+    ReadHandlerAnswer(PendingMessagesAnswer pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 

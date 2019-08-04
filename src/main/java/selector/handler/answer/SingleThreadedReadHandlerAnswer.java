@@ -4,7 +4,7 @@ import java.nio.channels.SelectionKey;
 
 class SingleThreadedReadHandlerAnswer extends ReadHandlerAnswer {
 
-    SingleThreadedReadHandlerAnswer(PendingMessages pendingMessages) {
+    SingleThreadedReadHandlerAnswer(PendingMessagesAnswer pendingMessages) {
         super(pendingMessages);
     }
 

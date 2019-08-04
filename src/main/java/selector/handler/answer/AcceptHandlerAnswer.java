@@ -6,9 +6,9 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 class AcceptHandlerAnswer {
-    private final PendingMessages pendingMessages;
+    private final PendingMessagesAnswer pendingMessages;
 
-    AcceptHandlerAnswer(PendingMessages pendingMessages) {
+    AcceptHandlerAnswer(PendingMessagesAnswer pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 

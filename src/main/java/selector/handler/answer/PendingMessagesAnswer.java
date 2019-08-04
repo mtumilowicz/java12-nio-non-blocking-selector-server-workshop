@@ -12,19 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.UnaryOperator;
 
-class PendingMessages {
+class PendingMessagesAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingMessagesByClient;
 
-    private PendingMessages(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
+    private PendingMessagesAnswer(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
         this.pendingMessagesByClient = pendingData;
     }
 
-    static PendingMessages multithreaded() {
-        return new PendingMessages(new ConcurrentHashMap<>());
+    static PendingMessagesAnswer multithreaded() {
+        return new PendingMessagesAnswer(new ConcurrentHashMap<>());
     }
 
-    static PendingMessages singleThreaded() {
-        return new PendingMessages(new HashMap<>());
+    static PendingMessagesAnswer singleThreaded() {
+        return new PendingMessagesAnswer(new HashMap<>());
     }
 
     void initFor(SocketChannel client) {

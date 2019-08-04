@@ -9,7 +9,7 @@ class PooledReadHandlerAnswer extends ReadHandlerAnswer {
     private final Queue<Runnable> selectorActions;
 
     PooledReadHandlerAnswer(ExecutorService pool,
-                            PendingMessages pendingMessages,
+                            PendingMessagesAnswer pendingMessages,
                             Queue<Runnable> selectorActions) {
         super(pendingMessages);
         this.pool = pool;
