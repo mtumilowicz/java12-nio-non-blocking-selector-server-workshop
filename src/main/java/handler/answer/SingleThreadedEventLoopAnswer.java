@@ -14,7 +14,7 @@ public class SingleThreadedEventLoopAnswer {
     private final SingleThreadedIncomingMessageAnswer incomingMessage = new SingleThreadedIncomingMessageAnswer(pendingMessages);
     private final OutgoingMessageAnswer outgoingMessage = new OutgoingMessageAnswer(pendingMessages);
 
-    public final void handle(Selector selector) throws IOException {
+    public final void runOver(Selector selector) throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();

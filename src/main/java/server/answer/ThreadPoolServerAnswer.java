@@ -13,7 +13,7 @@ public class ThreadPoolServerAnswer extends ServerAnswer {
 
     @Override
     protected void handleConnections(Selector selector) throws IOException {
-        new ThreadPooledEventLoopAnswer().handle(selector);
+        new ThreadPooledEventLoopAnswer().runOver(selector);
     }
 
     public static void main(String[] args) throws IOException {

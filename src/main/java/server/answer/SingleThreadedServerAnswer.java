@@ -13,7 +13,7 @@ public class SingleThreadedServerAnswer extends ServerAnswer {
 
     @Override
     protected void handleConnections(Selector selector) throws IOException {
-        new SingleThreadedEventLoopAnswer().handle(selector);
+        new SingleThreadedEventLoopAnswer().runOver(selector);
     }
 
     public static void main(String[] args) throws IOException {

@@ -20,7 +20,7 @@ public class ThreadPooledEventLoopAnswer {
     private final ThreadPooledIncomingMessageAnswer incomingMessage = new ThreadPooledIncomingMessageAnswer(pool, pendingMessages, selectorActions);
     private final OutgoingMessageAnswer outgoingMessage = new OutgoingMessageAnswer(pendingMessages);
 
-    public void handle(Selector selector) throws IOException {
+    public void runOver(Selector selector) throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
