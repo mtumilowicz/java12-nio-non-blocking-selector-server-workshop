@@ -5,9 +5,9 @@ import handler.answer.SelectorKeysHandlerAnswer;
 import java.io.IOException;
 import java.nio.channels.Selector;
 
-public class SingleThreadedSelectorNonBlockingServerAnswer extends NonBlockingServerAnswer {
+public class SIngleThreadedServerAnswer extends ServerAnswer {
 
-    public SingleThreadedSelectorNonBlockingServerAnswer(int port) {
+    public SIngleThreadedServerAnswer(int port) {
         super(port);
     }
 
@@ -17,6 +17,6 @@ public class SingleThreadedSelectorNonBlockingServerAnswer extends NonBlockingSe
     }
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedSelectorNonBlockingServerAnswer(81).start();
+        new SIngleThreadedServerAnswer(81).start();
     }
 }

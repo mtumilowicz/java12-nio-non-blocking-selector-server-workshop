@@ -5,9 +5,9 @@ import handler.answer.PooledSelectorKeysHandlerAnswer;
 import java.io.IOException;
 import java.nio.channels.Selector;
 
-public class SelectorNonBlockingServerWithWorkerPoolAnswer extends NonBlockingServerAnswer {
+public class ThreadPoolServerAnswer extends ServerAnswer {
 
-    public SelectorNonBlockingServerWithWorkerPoolAnswer(int port) {
+    public ThreadPoolServerAnswer(int port) {
         super(port);
     }
 
@@ -18,6 +18,6 @@ public class SelectorNonBlockingServerWithWorkerPoolAnswer extends NonBlockingSe
     }
 
     public static void main(String[] args) throws IOException {
-        new SelectorNonBlockingServerWithWorkerPoolAnswer(81).start();
+        new ThreadPoolServerAnswer(81).start();
     }
 }

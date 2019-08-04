@@ -1,7 +1,6 @@
-package server.answer;
+package server.workshop;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -9,18 +8,19 @@ import java.nio.channels.ServerSocketChannel;
 /**
  * Created by mtumilowicz on 2019-07-31.
  */
-public abstract class NonBlockingServerAnswer {
+public abstract class ServerWorkshop {
     protected final int port;
 
-    public NonBlockingServerAnswer(int port) {
+    public ServerWorkshop(int port) {
         this.port = port;
     }
 
     public void start() throws IOException {
         log("Creating server socket on port " + port);
-        ServerSocketChannel ssc = ServerSocketChannel.open();
-        ssc.bind(new InetSocketAddress("localhost", port));
-        ssc.configureBlocking(false);
+        // open server socket channel, hint: ServerSocketChannel.open();
+        ServerSocketChannel ssc = null;
+        // bind to the localhost:port, hint: bind, new InetSocketAddress("localhost", port)
+        // configure non blocking, hint: configureBlocking(false)
         log("Created server socket on port " + port);
 
         Selector selector = Selector.open();

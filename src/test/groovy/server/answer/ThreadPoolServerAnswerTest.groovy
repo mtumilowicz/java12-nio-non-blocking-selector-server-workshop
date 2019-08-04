@@ -6,16 +6,16 @@ import spock.lang.Specification
 /**
  * Created by mtumilowicz on 2019-07-23.
  */
-class SingleThreadedSelectorNonBlockingServerTest extends Specification {
+class ThreadPoolServerAnswerTest extends Specification {
 
     def expectedClientOutput = ["send: xxx", "received: xxx"]
 
-    def "SingleThreadedSelectorNonBlockingServerAnswer"() {
+    def "ThreadPoolServerAnswer"() {
         given:
-        def port = 3
+        def port = 2
 
         expect:
-        expectedClientOutput == extractClientOutputFor(port, new SingleThreadedSelectorNonBlockingServerAnswer(port))
+        expectedClientOutput == extractClientOutputFor(port, new ThreadPoolServerAnswer(port))
     }
     
     def extractClientOutputFor(port, server) {
