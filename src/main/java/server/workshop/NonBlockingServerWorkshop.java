@@ -1,7 +1,8 @@
 package server.workshop;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 
 /**
@@ -22,10 +23,12 @@ public abstract class NonBlockingServerWorkshop {
         // configure non blocking, hint: configureBlocking(false)
         log("Created server socket on port " + port);
 
-        processSockets(ssc);
+        Selector selector = Selector.open();
+        ssc.register(selector, SelectionKey.OP_ACCEPT);
+        handleConnections(selector);
     }
 
-    protected abstract void processSockets(ServerSocketChannel ssc) throws IOException;
+    protected abstract void handleConnections(Selector selector) throws IOException;
 
     private void log(String message) {
         System.out.println(message);

@@ -1,12 +1,12 @@
 package selector.server.answer;
 
 import selector.handler.answer.PooledSelectorKeysHandlerAnswer;
-import server.answer.XNBServerAnswer;
+import server.answer.NonBlockingServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;
 
-public class SelectorNonBlockingServerWithWorkerPoolAnswer extends XNBServerAnswer {
+public class SelectorNonBlockingServerWithWorkerPoolAnswer extends NonBlockingServerAnswer {
 
     public SelectorNonBlockingServerWithWorkerPoolAnswer(int port) {
         super(port);
@@ -20,9 +20,5 @@ public class SelectorNonBlockingServerWithWorkerPoolAnswer extends XNBServerAnsw
 
     public static void main(String[] args) throws IOException {
         new SelectorNonBlockingServerWithWorkerPoolAnswer(81).start();
-    }
-
-    private void log(String message) {
-        System.out.println(message);
     }
 }
