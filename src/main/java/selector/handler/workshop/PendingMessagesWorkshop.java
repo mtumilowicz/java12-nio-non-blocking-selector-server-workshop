@@ -5,7 +5,6 @@ import transformer.BufferTransformer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,19 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.UnaryOperator;
 
 class PendingMessagesWorkshop {
-    private final Map<SocketChannel, Queue<ByteBuffer>> pendingMessagesByClient;
-
-    private PendingMessagesWorkshop(Map<SocketChannel, Queue<ByteBuffer>> pendingData) {
-        this.pendingMessagesByClient = pendingData;
-    }
-
-    static PendingMessagesWorkshop multithreaded() {
-        return new PendingMessagesWorkshop(new ConcurrentHashMap<>());
-    }
-
-    static PendingMessagesWorkshop singleThreaded() {
-        return new PendingMessagesWorkshop(new HashMap<>());
-    }
+    private final Map<SocketChannel, Queue<ByteBuffer>> pendingMessagesByClient = new ConcurrentHashMap<>();
 
     void initFor(SocketChannel client) {
         pendingMessagesByClient.put(client, new ConcurrentLinkedQueue<>());

@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  */
 public class PooledSelectorKeysHandlerAnswer {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
-    private final PendingMessagesAnswer pendingMessages = PendingMessagesAnswer.multithreaded();
+    private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
     private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingMessages);
     private final PooledReadHandlerAnswer readHandler = new PooledReadHandlerAnswer(pool, pendingMessages, selectorActions);

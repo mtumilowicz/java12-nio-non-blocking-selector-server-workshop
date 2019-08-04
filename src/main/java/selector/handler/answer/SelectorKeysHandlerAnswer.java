@@ -9,7 +9,7 @@ import java.util.Set;
  * Created by mtumilowicz on 2019-07-26.
  */
 public class SelectorKeysHandlerAnswer {
-    private final PendingMessagesAnswer pendingMessages = PendingMessagesAnswer.singleThreaded();
+    private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final AcceptHandlerAnswer acceptHandler = new AcceptHandlerAnswer(pendingMessages);
     private final SingleThreadedReadHandlerAnswer readHandler = new SingleThreadedReadHandlerAnswer(pendingMessages);
     private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingMessages);
