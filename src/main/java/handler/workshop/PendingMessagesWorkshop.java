@@ -18,14 +18,9 @@ class PendingMessagesWorkshop {
     }
 
     void sendTo(SocketChannel client) throws IOException {
-        var buffersToWrite = pendingMessagesByClient.get(client);
-        while (!buffersToWrite.isEmpty()) {
-            ByteBuffer buf = buffersToWrite.poll();
-            int bytesWritten = client.write(buf);
-            if (bytesWritten == -1) {
-                closeClientIfEnd(client);
-            }
-        }
+        // get queue for the given client
+        // process all buffers (until queue is not empty), hint: poll()
+        // write to the client, hint: client.write(buf)
     }
 
     void closeClientIfEnd(SocketChannel client) throws IOException {

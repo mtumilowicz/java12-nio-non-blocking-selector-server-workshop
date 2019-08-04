@@ -21,11 +21,7 @@ class PendingMessagesAnswer {
     void sendTo(SocketChannel client) throws IOException {
         var buffersToWrite = pendingMessagesByClient.get(client);
         while (!buffersToWrite.isEmpty()) {
-            ByteBuffer buf = buffersToWrite.poll();
-            int bytesWritten = client.write(buf);
-            if (bytesWritten == -1) {
-                closeClientIfEnd(client);
-            }
+            client.write(buffersToWrite.poll());
         }
     }
 
