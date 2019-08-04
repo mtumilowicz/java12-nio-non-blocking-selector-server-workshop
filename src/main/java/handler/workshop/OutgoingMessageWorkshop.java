@@ -1,4 +1,4 @@
-package selector.handler.workshop;
+package handler.workshop;
 
 
 import java.io.IOException;

@@ -1,6 +1,6 @@
-package selector.server.answer;
+package server.answer;
 
-import selector.handler.answer.SelectorKeysHandlerAnswer;
+import handler.answer.SelectorKeysHandlerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;

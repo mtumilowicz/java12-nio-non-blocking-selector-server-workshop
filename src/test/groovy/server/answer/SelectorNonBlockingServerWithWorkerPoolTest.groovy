@@ -1,7 +1,6 @@
-package selector.answer
+package server.answer
 
 import client.TestClient
-import selector.server.answer.SelectorNonBlockingServerWithWorkerPoolAnswer
 import spock.lang.Specification
 
 /**
