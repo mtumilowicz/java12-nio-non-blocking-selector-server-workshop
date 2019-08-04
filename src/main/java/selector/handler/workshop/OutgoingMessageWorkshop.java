@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-class WriteHandlerWorkshop {
+class OutgoingMessageWorkshop {
     private final PendingMessagesWorkshop pendingMessages;
 
-    WriteHandlerWorkshop(PendingMessagesWorkshop pendingMessages) {
+    OutgoingMessageWorkshop(PendingMessagesWorkshop pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 

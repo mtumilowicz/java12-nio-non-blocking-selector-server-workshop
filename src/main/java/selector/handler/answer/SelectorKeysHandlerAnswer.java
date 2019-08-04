@@ -12,7 +12,7 @@ public class SelectorKeysHandlerAnswer {
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
     private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
     private final SingleThreadedIncomingMessageAnswer incomingMessage = new SingleThreadedIncomingMessageAnswer(pendingMessages);
-    private final WriteHandlerAnswer writeHandler = new WriteHandlerAnswer(pendingMessages);
+    private final OutgoingMessageAnswer outgoingMessage = new OutgoingMessageAnswer(pendingMessages);
 
     public final void handle(Selector selector) throws IOException {
         while (true) {
@@ -27,7 +27,7 @@ public class SelectorKeysHandlerAnswer {
         try {
             clientConnection.tryAccept(key);
             incomingMessage.tryReceive(key);
-            writeHandler.handle(key);
+            outgoingMessage.handle(key);
         } catch (Exception ex) {
             // workshops
         }
