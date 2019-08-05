@@ -204,4 +204,84 @@ _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
       can obtain a set of the keys whose channels were found to be ready at that point. By iterating
       over these keys, you can service each channel that has become ready since the last time you
       invoked select( ).
-    
+    * At the most fundamental level, selectors provide the capability to ask a channel if it's ready to
+      perform an I/O operation of interest to you. For example, a SocketChannel object could be
+      asked if it has any bytes ready to read, or we may want to know if a ServerSocketChannel has
+      any incoming connections ready to accept.
+    * Selectors provide this service when used in conjunction with SelectableChannel objects, but
+      there's more to the story than that. The real power of readiness selection is that a potentially
+      large number of channels can be checked for readiness simultaneously. The caller can easily
+      determine which of several channels are ready to go
+    * traditional Java solution to monitoring multiple sockets has been to create a
+      thread for each and allow the thread to block in a read( ) until data is available. This
+      effectively makes each blocked thread a socket monitor and the JVM's thread scheduler
+      becomes the notification mechanism
+    * True readiness selection must be done by the operating system. One of the most important
+      functions performed by an operating system is to handle I/O requests and notify processes
+      when their data is ready. So it only makes sense to delegate this function down to the
+      operating system. The Selector class provides the abstraction by which Java code can request
+      readiness selection service from the underlying operating system in a portable way.
+    * Selector
+      The Selector class manages information about a set of registered channels and their
+      readiness states. Channels are registered with selectors, and a selector can be asked to
+      update the readiness states of the channels currently registered with it. When doing so,
+      the invoking thread can optionally indicate that it would prefer to be suspended until
+      one of the registered channels is ready.
+    * SelectionKey
+      A SelectionKey encapsulates the registration relationship between a specific channel
+      and a specific selector. A SelectionKey object is returned from
+      SelectableChannel.register( ) and serves as a token representing the registration.
+      SelectionKey objects contain two bit sets (encoded as integers) indicating which
+      channel operations the registrant has an interest in and which operations the channel is
+      ready to perform.
+    * Although the register( ) method is defined on the SelectableChannel class, channels are
+      registered with selectors, not the other way around. A selector maintains a set of channels to
+      monitor. A given channel can be registered with more than one selector and has no idea which
+      Selector objects it's currently registered with. The choice to put the register( ) method in
+      SelectableChannel rather than in Selector was somewhat arbitrary. It returns a SelectionKey
+      object that encapsulates a relationship between the two objects. The important thing is to
+      remember that the Selector object controls the selection process for the channels registered
+      with it.
+    * Selectors are the managing objects, not the selectable channel objects.
+      The Selector object performs readiness selection of channels registered
+      with it and manages selection keys.
+    * Selectors are not
+      primary I/O objects like channels or streams: data never passes through them
+    * ops - This is a bit
+            mask that represents the I/O operations that the selector should test for when checking the
+            readiness of that channel
+* SelectionKey
+    * a key represents the registration of a particular channel object with a
+      particular selector object. You can see that relationship reflected in the first two methods
+      above. The channel( ) method returns the SelectableChannel object associated with the key,
+      and selector( ) returns the associated Selector object
+    * A SelectionKey object contains two sets encoded as integer bit masks: one for those
+      operations of interest to the channel/selector combination (the interest set) and one
+      representing operations the channel is currently ready to perform (the ready set).
+    *  there are currently four channel operations that can be tested for readiness.
+        * isReadable( ),
+          isWritable( ), isConnectable( ), and isAcceptable( )
+    * The ready set contained by a SelectionKey object is as of the time the
+      selector last checked the states of the registered channels. The readiness
+      of individual channels could have changed in the meantime.
+* Each Selector object maintains
+  three sets of keys:
+  Registered key set
+  The set of currently registered keys associated with the selector. Not every registered
+  key is necessarily still valid. This set is returned by the keys( ) method and may be
+  empty. The registered key set is not directly modifiable; attempting to do so yields a
+  java.lang.UnsupportedOperationException.
+  Selected key set
+  A subset of the registered key set. Each member of this set is a key whose associated
+  channel was determined by the selector (during a prior selection operation) to be ready
+  for at least one of the operations in the key's interest set. This set is returned by the
+  selectedKeys( ) method (and may be empty).
+  Don't confuse the selected key set with the ready set. This is a set of keys, each with an
+  associated channel that is ready for at least one operation. Each key has an embedded ready
+  set that indicates the set of operations the associated channel is ready to perform.
+  Keys can be directly removed from this set, but not added. Attempting to add to the selected
+  key set throws java.lang.UnsupportedOperationException.
+  Cancelled key set
+  A subset of the registered key set, this set contains keys whose cancel( ) methods have
+  been called (the key has been invalidated), but they have not been deregistered. This
+  set is private to the selector object and cannot be accessed directly.
