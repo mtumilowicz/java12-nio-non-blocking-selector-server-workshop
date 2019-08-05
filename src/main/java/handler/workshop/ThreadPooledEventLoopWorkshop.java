@@ -14,23 +14,24 @@ import java.util.concurrent.Executors;
 public class ThreadPooledEventLoopWorkshop {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final PendingMessagesWorkshop pendingMessages = new PendingMessagesWorkshop();
-    private final Queue<Runnable> switchKeysActions = new ConcurrentLinkedQueue<>();
+    private final Queue<Runnable> switchKeysToWriteActions = new ConcurrentLinkedQueue<>();
     private final ClientConnectionWorkshop clientConnection = new ClientConnectionWorkshop(pendingMessages);
-    private final ThreadPooledIncomingMessageWorkshop incomingMessage = new ThreadPooledIncomingMessageWorkshop(pool, pendingMessages, switchKeysActions);
+    private final ThreadPooledIncomingMessageWorkshop incomingMessage = new ThreadPooledIncomingMessageWorkshop(pool, pendingMessages, switchKeysToWriteActions);
     private final OutgoingMessageWorkshop outgoingMessage = new OutgoingMessageWorkshop(pendingMessages);
 
     public void runOver(Selector selector) throws IOException {
         while (true) {
             // select keys whose corresponding channels are ready for I/O operations, hint: selector
             // get keys, hint: selector.selectedKeys()
-            // switch keys and clear actions, hint: switchKeysAndClearActions
+            // switch keys and clear actions, hint: switchKeysToWriteAndClear
             // for each key run its operation, hint: runOperationOf
             // clear keys
         }
     }
 
-    private void switchKeysAndClearActions() {
-        // hint: switchKeysActions, Runnable::run
+    private void switchKeysToWriteAndClear() {
+        // hint: switchKeysToWriteActions, Runnable::run
+        // clear
     }
 
     private void runOperationOf(SelectionKey key) {

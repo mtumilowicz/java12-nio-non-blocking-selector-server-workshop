@@ -15,24 +15,24 @@ import java.util.concurrent.Executors;
 public class ThreadPooledEventLoopAnswer {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
-    private final Queue<Runnable> switchKeysActions = new ConcurrentLinkedQueue<>();
+    private final Queue<Runnable> switchKeysToWriteActions = new ConcurrentLinkedQueue<>();
     private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
-    private final ThreadPooledIncomingMessageAnswer incomingMessage = new ThreadPooledIncomingMessageAnswer(pool, pendingMessages, switchKeysActions);
+    private final ThreadPooledIncomingMessageAnswer incomingMessage = new ThreadPooledIncomingMessageAnswer(pool, pendingMessages, switchKeysToWriteActions);
     private final OutgoingMessageAnswer outgoingMessage = new OutgoingMessageAnswer(pendingMessages);
 
     public void runOver(Selector selector) throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
-            switchKeysAndClearActions();
+            switchKeysToWriteAndClear();
             keys.forEach(this::runOperationOf);
             keys.clear();
         }
     }
 
-    private void switchKeysAndClearActions() {
-        switchKeysActions.forEach(Runnable::run);
-        switchKeysActions.clear();
+    private void switchKeysToWriteAndClear() {
+        switchKeysToWriteActions.forEach(Runnable::run);
+        switchKeysToWriteActions.clear();
     }
 
     private void runOperationOf(SelectionKey key) {
