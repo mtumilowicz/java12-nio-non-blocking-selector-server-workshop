@@ -15,27 +15,27 @@ import java.util.concurrent.Executors;
 public class ThreadPooledEventLoopAnswer {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
-    private final Queue<Runnable> selectorActions = new ConcurrentLinkedQueue<>();
+    private final Queue<Runnable> switchKeysActions = new ConcurrentLinkedQueue<>();
     private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
-    private final ThreadPooledIncomingMessageAnswer incomingMessage = new ThreadPooledIncomingMessageAnswer(pool, pendingMessages, selectorActions);
+    private final ThreadPooledIncomingMessageAnswer incomingMessage = new ThreadPooledIncomingMessageAnswer(pool, pendingMessages, switchKeysActions);
     private final OutgoingMessageAnswer outgoingMessage = new OutgoingMessageAnswer(pendingMessages);
 
     public void runOver(Selector selector) throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
-            runAndClearSelectorActions();
-            keys.forEach(this::handleKey);
+            switchKeysAndClearActions();
+            keys.forEach(this::runOperationOf);
             keys.clear();
         }
     }
 
-    private void runAndClearSelectorActions() {
-        selectorActions.forEach(Runnable::run);
-        selectorActions.clear();
+    private void switchKeysAndClearActions() {
+        switchKeysActions.forEach(Runnable::run);
+        switchKeysActions.clear();
     }
 
-    private void handleKey(SelectionKey key) {
+    private void runOperationOf(SelectionKey key) {
         try {
             clientConnection.tryAccept(key);
             incomingMessage.tryReceive(key);
