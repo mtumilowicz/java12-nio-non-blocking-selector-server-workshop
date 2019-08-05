@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,24 +21,23 @@ public class ThreadPooledEventLoopWorkshop {
 
     public void runOver(Selector selector) throws IOException {
         while (true) {
-            selector.select();
-            Set<SelectionKey> keys = selector.selectedKeys();
-            switchKeysAndClearActions();
-            keys.forEach(this::runOperationOf);
-            keys.clear();
+            // select keys whose corresponding channels are ready for I/O operations, hint: selector
+            // get keys, hint: selector.selectedKeys()
+            // switch keys and clear actions, hint: switchKeysAndClearActions
+            // for each key run its operation, hint: runOperationOf
+            // clear keys
         }
     }
 
     private void switchKeysAndClearActions() {
-        switchKeysActions.forEach(Runnable::run);
-        switchKeysActions.clear();
+        // hint: switchKeysActions, Runnable::run
     }
 
     private void runOperationOf(SelectionKey key) {
         try {
-            clientConnection.tryAccept(key);
-            incomingMessage.tryReceive(key);
-            outgoingMessage.trySend(key);
+            // accept client connection, hint: clientConnection, tryAccept
+            // receive message from client, hint: incomingMessage, tryReceive
+            // send message to client, hint: outgoingMessage, trySend
         } catch (Exception ex) {
             // workshops
         }

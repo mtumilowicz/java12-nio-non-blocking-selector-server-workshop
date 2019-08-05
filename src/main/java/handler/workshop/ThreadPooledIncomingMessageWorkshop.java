@@ -20,12 +20,12 @@ class ThreadPooledIncomingMessageWorkshop extends IncomingMessageWorkshop {
 
     @Override
     void switchToWrite(SelectionKey key) {
-        selectorActions.add(() -> key.interestOps(SelectionKey.OP_WRITE));
-        key.selector().wakeup();
+        // queue switching action, hint: selectorActions.add, key.interestOps, OP_WRITE
+        // wakeup selector, hint: key.selector().wakeup()
     }
 
     @Override
     void handleIncomingMessage(SocketChannel client, ByteBuffer buffer, SelectionKey key) {
-        pool.submit(() -> super.handleIncomingMessage(client, buffer, key));
+        // submit handlingIncomingMessage to the pool
     }
 }
