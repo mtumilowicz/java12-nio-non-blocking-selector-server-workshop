@@ -12,7 +12,7 @@ class OutgoingMessageWorkshop {
         this.pendingMessages = pendingMessages;
     }
 
-    void handle(SelectionKey key) throws IOException {
+    void trySend(SelectionKey key) throws IOException {
         if (canBeWritten(key)) {
             // get client (SocketChannel) from key, hint: key.channel() + casting
             SocketChannel client = null;

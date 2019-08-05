@@ -11,7 +11,7 @@ class ClientConnectionWorkshop {
         this.pendingMessages = pendingMessages;
     }
 
-    void handle(SelectionKey key) throws IOException {
+    void tryAccept(SelectionKey key) throws IOException {
         if (canBeAccepted(key)) {
             // get ServerSocketChannel from key, hint: key.channel() + casting
             // accept connection, hint: channel.accept()

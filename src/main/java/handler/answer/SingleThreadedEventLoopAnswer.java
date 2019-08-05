@@ -18,16 +18,16 @@ public class SingleThreadedEventLoopAnswer {
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
-            keys.forEach(this::handleKey);
+            keys.forEach(this::runOperationOf);
             keys.clear();
         }
     }
 
-    private void handleKey(SelectionKey key) {
+    private void runOperationOf(SelectionKey key) {
         try {
             clientConnection.tryAccept(key);
             incomingMessage.tryReceive(key);
-            outgoingMessage.handle(key);
+            outgoingMessage.trySend(key);
         } catch (Exception ex) {
             // workshops
         }

@@ -39,7 +39,7 @@ public class ThreadPooledEventLoopAnswer {
         try {
             clientConnection.tryAccept(key);
             incomingMessage.tryReceive(key);
-            outgoingMessage.handle(key);
+            outgoingMessage.trySend(key);
         } catch (Exception ex) {
             // workshops
         }
