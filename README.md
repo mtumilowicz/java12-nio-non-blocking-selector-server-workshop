@@ -171,4 +171,37 @@ _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
     guarantee that the bytes sent will arrive in the same order but make no promises about
     maintaining groupings. A sender may write 20 bytes to a socket, and the receiver gets only 3
     of those bytes when invoking read( ). The remaining 17 bytes may still be in transit.
-  
+* Selectors provide the ability to do readiness selection,
+    which enables multiplexed I/O
+    * Imagine a bank with three drive-through lanes. In the traditional (nonselector)
+      scenario, imagine that each drive-through lane has a pneumatic tube that runs to its own teller
+      station inside the bank, and each station is walled off from the others. This means that each
+      tube (channel) requires a dedicated teller (worker thread). This approach doesn't scale well
+      and is wasteful. For each new tube (channel) added, a new teller is required, along with
+      associated overhead such as tables, chairs, paper clips (memory, CPU cycles, context
+      switching), etc. And when things are slow, these resources (which have associated costs) tend
+      to sit idle.
+    * Now imagine a different scenario in which each pneumatic tube (channel) is connected to
+      a single teller station inside the bank. The station has three slots where the carriers (data
+      buffers) arrive, each with an indicator (selection key) that lights up when the carrier is in
+      the slot. Also imagine that the teller (worker thread) has a sick cat and spends as much time as
+      possible reading Do It Yourself Taxidermy. 1 At the end of each paragraph, the teller glances
+      up at the indicator lights (invokes select( )) to determine if any of the channels are ready
+      (readiness selection). The teller (worker thread) can perform another task while
+      the drive-through lanes (channels) are idle yet still respond to them in a timely manner when
+      they require attention.
+    * it illustrates the paradigm of quickly checking to see if
+      attention is required by any of a set of resources, without being forced to wait if something
+      isn't ready to go. This ability to check and continue is key to scalability. A single thread can
+      monitor large numbers of channels with readiness selection. The Selector and related classes
+      provide the APIs to do readiness selection on channels
+    *  You register one or
+      more previously created selectable channels with a selector object. A key that represents the
+      relationship between one channel and one selector is returned. Selection keys remember what
+      you are interested in for each channel. They also track the operations of interest that their
+      channel is currently ready to perform. When you invoke select( ) on a selector object, the
+      associated keys are updated by checking all the channels registered with that selector. You
+      can obtain a set of the keys whose channels were found to be ready at that point. By iterating
+      over these keys, you can service each channel that has become ready since the last time you
+      invoked select( ).
+    
