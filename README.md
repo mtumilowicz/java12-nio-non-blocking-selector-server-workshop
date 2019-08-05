@@ -156,3 +156,19 @@ _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
     * The ServerSocketChannel class is a channel-based socket listener. It performs the same basic
           task as the familiar java.net.ServerSocket but adds channel semantics, including the ability to
           operate in nonblocking mode.
+        * ServerSocketChannel doesn't have a bind( ) method, it's necessary to fetch the peer
+      socket and use it to bind to a port to begin listening for connections
+        * If invoked in nonblocking mode, ServerSocketChannel.accept( ) will immediately return null
+          if no incoming connections are currently pending. This ability to check for connections
+          without getting stuck is what enables scalability and reduces complexity. Selectability also
+          comes into play. A ServerSocketChannel object can be registered with a Selector instance to
+          enable notification when new connections arrive
+* The Socket and SocketChannel classes encapsulate point-to-point, ordered network
+  connections similar to those provided by the familiar TCP/IP connections we all know and
+  love. A SocketChannel acts as the client, initiating a connection to a listening server. It cannot
+  receive until connected and then only from the address to which the connection was made
+  * Keep in mind that sockets are stream-oriented, not packet-oriented. They
+    guarantee that the bytes sent will arrive in the same order but make no promises about
+    maintaining groupings. A sender may write 20 bytes to a socket, and the receiver gets only 3
+    of those bytes when invoking read( ). The remaining 17 bytes may still be in transit.
+  
