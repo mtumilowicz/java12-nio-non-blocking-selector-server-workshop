@@ -1,6 +1,6 @@
 package handler.workshop;
 
-import transformer.BufferTransformer;
+import transformer.BufferTransformerAnswer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -35,6 +35,6 @@ class PendingMessagesWorkshop {
 
     private void prepareBuffer(ByteBuffer buf) {
         // reverse the buffer, hint: buf.flip()
-        BufferTransformer.transformBytes(buf, UnaryOperator.identity());
+        BufferTransformerAnswer.transformBytes(buf, UnaryOperator.identity());
     }
 }
