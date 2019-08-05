@@ -1,7 +1,6 @@
 package server.workshop;
 
 import java.io.IOException;
-import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 
@@ -23,8 +22,9 @@ public abstract class ServerWorkshop {
         // configure non blocking, hint: configureBlocking(false)
         log("Created server socket on port " + port);
 
-        Selector selector = Selector.open();
-        ssc.register(selector, SelectionKey.OP_ACCEPT);
+        // open selector, hint: Selector.open()
+        // register selector for listening on new connections, hint: ssc.register(...), OP_ACCEPT
+        Selector selector = null;
         handleConnections(selector);
     }
 
