@@ -337,4 +337,24 @@ _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
   channels are currently ready, it immediately returns 0 
 * wakeup( ), provides the capability to gracefully break
   out a thread from a blocked select( ) invocation
-* 
+* The important part is what happens when a key is not already in the selected set. When at
+  least one operation of interest becomes ready on the channel, the ready set of the key is
+  cleared, and the currently ready operations are added to the ready set. The key is then added to
+  the selected key set
+* The way to clear the ready set of a SelectionKey is to remove the key itself from the set of
+  selected keys. The ready set of a selection key is modified only by the Selector object during a
+  selection operation. The idea is that only keys in the selected set are considered to have
+  legitimate readiness information. That information persists in the key until the key is removed
+  from the selected key set, which indicates to the selector that you have seen and dealt with it.
+  The next time something of interest happens on the channel, the key will be set to reflect the
+  state of the channel at that point and once again be added to the selected key set.
+* The conventional approach is to perform a select( )
+  call on the selector (which updates the selected key set) then iterate over the set of keys
+  returned by selectedKeys( ). As each key is examined in turn, the associated channel is dealt
+  with according to the key's ready set. The keys are then removed from the selected key set
+* Selector objects are thread-safe, but the key sets they contain are not. The key sets returned by
+  the keys( ) and selectedKeys( ) methods are direct references to private Set objects inside the
+  Selector object. These sets can change at any time. The registered key set is read-only.
+* A better approach is to use one selector for all selectable channels and delegate the servicing
+  of ready channels to other threads. You have a single point to monitor channel readiness and a
+  decoupled pool of worker threads to handle the incoming data.
