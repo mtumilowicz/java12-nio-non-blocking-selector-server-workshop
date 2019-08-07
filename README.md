@@ -116,15 +116,13 @@ the state of that connection
           multiple buckets, or assembling disparate chunks of data into a whole. This can be a huge win
           because the operating system is highly optimized for this sort of thing
 # Socket Channels
-* model network sockets
+* models network sockets
 * can operate in nonblocking mode and are selectable
-* it's no longer necessary to
-  dedicate a thread to each socket connection (and suffer the context-switching overhead of
-  managing large numbers of threads). Using the new NIO classes, one or a few threads can
-  manage hundreds or even thousands of active socket connections with little or no performance
-  loss.
-*  it's possible to perform
-  readiness selection of socket channels using a Selector object
+* it's no longer necessary to dedicate a thread to each socket connection 
+(and suffer the context-switching overhead of managing large numbers of threads). 
+* Using the new NIO classes, one or a few threads can manage hundreds or even thousands of active socket 
+connections with little or no performance loss
+* it's possible to perform readiness selection of socket channels using a `Selector` object
 * you should understand the
   relationship between sockets and socket channels. As described earlier, a channel is a conduit
   to an I/O service and provides methods for interacting with that service. In the case of sockets,
