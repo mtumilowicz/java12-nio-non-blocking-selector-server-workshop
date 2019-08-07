@@ -86,25 +86,27 @@ of those data transfers
 
 # Channels
 * provide direct connections to I/O services
-* channel is a conduit that transports data efficiently between byte buffers and the
-  entity on the other end of the channel (usually a file or socket)
+* conduit that transports data between byte buffers and the entity on the other end of the channel 
+(a hardware device, a file or socket)
 * socket channel objects are bidirectional
-* The read( ) and write( ) methods of ByteChannel take ByteBuffer objects as arguments. Each
-  returns the number of bytes transferred, which can be less than the number of bytes in the
+* `read()` and `write()` returns the number of bytes transferred, which can be less than the number 
+of bytes in the
   buffer, or even zero. The position of the buffer will have been advanced by the same amount.
-  If a partial transfer was performed, the buffer can be resubmitted to the channel to continue
-  transferring data where it left off. Repeat until the buffer's `hasRemaining( )` method returns
+  * if a partial transfer was performed, the buffer can be resubmitted to the channel to continue
+  transferring data where it left off and repeated until the buffer's `hasRemaining( )` method returns
   false
 * cannot be reused - represents a specific connection to a specific I/O service and encapsulates 
 the state of that connection 
-* When a channel is closed, that connection is lost, and the channel is no longer connected to anything.
-* Scatter/gather is a simple yet powerful concept
-    * It refers to performing a single I/O operation across multiple buffers. 
-    * For a write operation, data is gathered (drained) from several buffers in turn and sent 
+* when a channel is closed, that connection is lost, and the channel is no longer connected to anything
+* scatter/gather is a simple yet powerful concept
+    * performs a single I/O operation across multiple buffers
+    * for a write operation, data is gathered (drained) from several buffers in turn and sent 
     along the channel. The buffers do not need to have the same capcity (and they usually don't). 
     The effect is the same as if the content of all the buffers was concatenated into one large 
-    buffer before being sent. For reads, the data read from the channel is scattered to multiple 
-    buffers in sequence, filling each to its limit, until the data from the channel or the total buffer space is exhausted
+    buffer before being sent. 
+    * for reads, the data read from the channel is scattered to multiple 
+    buffers in sequence, filling each to its limit, until the data from the channel or the total 
+    buffer space is exhausted
     * example
         ```
         ByteBuffer header = ByteBuffer.allocateDirect (10);
@@ -119,6 +121,7 @@ the state of that connection
           delegate to the operating system the grunt work of separating out the data you read into
           multiple buckets, or assembling disparate chunks of data into a whole. This can be a huge win
           because the operating system is highly optimized for this sort of thing
+          
 # Socket Channels
 * models network sockets
 * can operate in nonblocking mode and are selectable
@@ -162,6 +165,7 @@ connections with little or no performance loss
     guarantee that the bytes sent will arrive in the same order but make no promises about
     maintaining groupings. A sender may write 20 bytes to a socket, and the receiver gets only 3
     of those bytes when invoking read( ). The remaining 17 bytes may still be in transit.
+    
 # Selectors provide the ability to do readiness selection, which enables multiplexed I/O
 * Imagine a bank with three drive-through lanes. In the traditional (nonselector)
   scenario, imagine that each drive-through lane has a pneumatic tube that runs to its own teller
@@ -240,6 +244,7 @@ connections with little or no performance loss
 * ops - This is a bit
         mask that represents the I/O operations that the selector should test for when checking the
         readiness of that channel
+        
 # SelectionKey
 * a key represents the registration of a particular channel object with a
   particular selector object. You can see that relationship reflected in the first two methods
