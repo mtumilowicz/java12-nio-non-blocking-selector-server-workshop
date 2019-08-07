@@ -5,30 +5,25 @@ _Reference_: https://github.com/kabutz/Transmogrifier
 _Reference_: http://www.java2s.com/Tutorials/Java/Socket/How_to_use_Java_SocketChannel_create_a_HTTP_client.htm  
 _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
 
+# introduction
 * I/O is often the limiting factor in application performance, not processing speed
-    * CPU intense tasks vs I/O waiting - when adding threads will be OK
-* Current JVMs run bytecode
-  at speeds approaching that of natively compiled code, sometimes doing even better because of
-  dynamic runtime optimizations
-  * most Java applications are no longer CPU
-    bound (spending most of their time executing code) and are more frequently I/O bound
-    (waiting for data transfers)
-* There's an impedance mismatch between the operating system
-  and the Java stream-based I/O model
-  * The operating system wants to move data in large
-    chunks (buffers)
-  * The
-    I/O classes of the JVM like to operate on small pieces — single bytes, or lines of text
-  * This
-    means that the operating system delivers buffers full of data that the stream classes of
-    java.io spend a lot of time breaking down into little pieces, often copying each piece
-    between several layers of objects
-  * NIO makes it easier to
-    back the truck right up to where you can make direct use of the data (a ByteBuffer object)
-  * This is not to say that it was impossible to move large amounts of data with the traditional I/O
-    model — it certainly was (and still is). The RandomAccessFile class in particular can be quite
-    efficient if you stick to the array-based read( ) and write( ) methods. Even those methods
-    entail at least one buffer copy, but are pretty close to the underlying operating-system calls.
+    * CPU intense tasks - adding more threads than cores will have harmful effect on performance,
+    suppose that processor works at full power and we force it to do context switches
+    * I/O waiting - adding more threads could be beneficial - context switches are not so harmful
+    if thread is only waiting
+* current JVMs run bytecode at speeds approaching that of natively compiled code or even better (dynamic 
+runtime optimizations), so
+    * applications are no longer CPU bound (spending most of their time executing code) 
+    * they are I/O bound (waiting for data transfers)
+* operating system vs Java stream-based I/O model
+    * operating system wants to move data in large chunks (buffers)
+    * I/O classes of the JVM operates on small pieces — single bytes, or lines of text
+    * operating system delivers buffers full of data -> stream classes of
+    `java.io` breaks it down into little pieces
+    * NIO makes it easier to back the big loaded buffer right up to where you can make direct use of the data 
+    (a `ByteBuffer` object)
+    * `RandomAccessFile` with array-based `read( )` and `write( )` methods are pretty close to the underlying 
+    operating-system calls (even those methods entail at least one buffer copy)
 * Buffer Handling
     * Buffers, and how buffers are handled, are the basis of all I/O
     * "input/output"
