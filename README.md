@@ -24,140 +24,137 @@ runtime optimizations), so
     (a `ByteBuffer` object)
     * `RandomAccessFile` with array-based `read( )` and `write( )` methods are pretty close to the underlying 
     operating-system calls (even those methods entail at least one buffer copy)
-* Buffer Handling
-    * Buffers, and how buffers are handled, are the basis of all I/O
-    * "input/output"
-      means nothing more than moving data in and out of buffers
-    * Processes perform I/O by requesting of the operating system that data be drained from
-      a buffer (write) or that a buffer be filled with data (read)
-    * The process requests that
-      its buffer be filled by making the read( ) system call. This results in the kernel issuing
-      a command to the disk controller hardware to fetch the data from disk. The disk controller
-      writes the data directly into a kernel memory buffer by DMA without further assistance from
-      the main CPU. Once the disk controller finishes filling the buffer, the kernel copies the data
-      from the temporary buffer in kernel space to the buffer specified by the process when it
-      requested the read( ) operation
-    * User space is
-      a nonprivileged area: code executing there cannot directly access hardware devices
-      * Kernel space is where the operating system lives. Kernel code has special privileges:
-        it can communicate with device controllers, manipulate the state of processes in user space,
-        etc. Most importantly, all I/O flows through kernel space
-    * Why not tell the disk controller to send it directly to
-      the buffer in user space?
-      * block-oriented hardware devices such as disk
-        controllers operate on fixed-size data blocks. The user process may be requesting an oddly
-        sized or misaligned chunk of data. The kernel plays the role of intermediary, breaking down
-        and reassembling data as it moves between user space and storage devices
-    * All modern operating systems make use of virtual memory. Virtual memory means that
-      artificial, or virtual, addresses are used in place of physical (hardware RAM) memory
-      addresses (simulates RAM)
-      1. More than one virtual address can refer to the same physical memory location.
-      2. A virtual memory space can be larger than the actual hardware memory available.
-    * it eliminates copies between kernel and user space
-        * By mapping a kernel space address
-          to the same physical address as a virtual address in user space, the DMA hardware (which can
-          access only physical memory addresses) can fill a buffer that is simultaneously visible to both
-          the kernel and a user space process
-* buffers
-    * Channels are portals through which I/O transfers
-      take place, and buffers are the sources or targets of those data transfers. For outgoing
-      transfers, data you want to send is placed in a buffer, which is passed to a channel. For
-      inbound transfers, a channel deposits data in a buffer you provide.
-    * 0 <= mark <= position <= limit <= capacity
-    * position attribute does this. It indicates where the next data element should be inserted
-      when calling put( ) or from where the next element should be retrieved when get( ) is invoked
-    * buffer.put((byte)'H').put((byte)'e').put((byte)'l').put((byte)'l')
-      .put((byte)'o');
-      * mark: X
-      * position: 5
-      * limit: 10
-      * capacity: 10
-    * We've filled the buffer, now we must prepare it for draining. We want to pass this buffer to a
-      channel so the content can be written out. But if the channel performs a get( ) on the buffer
-      now, it will fetch undefined data from beyond the good data we just inserted. If we set the
-      position back to 0, the channel will start fetching at the right place, but how will it know when
-      it has reached the end of the data we inserted? This is where the limit attribute comes in. The
-      limit indicates the end of the active buffer content
-    * We need to set the limit to the current
-      position, then reset the position to 0
-    * buffer.limit(buffer.position( )).position(0);
-    * The flip( ) method flips a buffer from a fill state, where data elements can be appended, to a
-      drain state ready for elements to be read out
-    * Following a flip - limit: 6
-    * What if you flip a buffer twice? It effectively becomes zero-sized.
-    * Buffers are not thread-safe
-* Channels
-    * provide direct connections to I/O
-      services. A Channel is a conduit that transports data efficiently between byte buffers and the
-      entity on the other end of the channel (usually a file or socket)
-    * socket
-      channel objects are bidirectional
-    * The read( ) and write( ) methods of ByteChannel take ByteBuffer objects as arguments. Each
-      returns the number of bytes transferred, which can be less than the number of bytes in the
-      buffer, or even zero. The position of the buffer will have been advanced by the same amount.
-      If a partial transfer was performed, the buffer can be resubmitted to the channel to continue
-      transferring data where it left off. Repeat until the buffer's hasRemaining( ) method returns
-      false
-    * Unlike buffers, channels cannot be reused. An open channel represents a specific connection
-      to a specific I/O service and encapsulates the state of that connection. When a channel is
-      closed, that connection is lost, and the channel is no longer connected to anything.
-    * Scatter/gather is a simple yet powerful concept (see Section 1.4.1.1).
-      It refers to performing a single I/O operation across multiple buffers. For a write operation,
-      data is gathered (drained) from several buffers in turn and sent along the channel. The buffers
-      do not need to have the same capcity (and they usually don't). The effect is the same as if the
-      content of all the buffers was concatenated into one large buffer before being sent. For reads,
-      the data read from the channel is scattered to multiple buffers in sequence, filling each to its
-      limit, until the data from the channel or the total buffer space is exhausted
-      * ByteBuffer header = ByteBuffer.allocateDirect (10);
-        ByteBuffer body = ByteBuffer.allocateDirect (80);
-        ByteBuffer [] buffers = { header, body };
-        Java NIO
-        64
-        int bytesRead = channel.read (buffers);
-        Upon returning from read( ), bytesRead holds the value 48 , the header buffer contains the
-        first 10 bytes read from the channel, and body holds the following 38 bytes. The channel
-        automatically scattered the data into the two buffers.
-        *  It allows you to
-          delegate to the operating system the grunt work of separating out the data you read into
-          multiple buckets, or assembling disparate chunks of data into a whole. This can be a huge win
-          because the operating system is highly optimized for this sort of thing
-* Socket Channels
-    * model network sockets
-    * can operate in nonblocking mode and are selectable
-    * it's no longer necessary to
-      dedicate a thread to each socket connection (and suffer the context-switching overhead of
-      managing large numbers of threads). Using the new NIO classes, one or a few threads can
-      manage hundreds or even thousands of active socket connections with little or no performance
-      loss.
-    *  it's possible to perform
-      readiness selection of socket channels using a Selector object
-    * you should understand the
-      relationship between sockets and socket channels. As described earlier, a channel is a conduit
-      to an I/O service and provides methods for interacting with that service. In the case of sockets,
-      the decision was made not to reimplement the socket protocol APIs in the corresponding
-      channel classes. The preexisting socket channels in java.net are reused for most protocol
-      operations.
-    * All the socket channels (SocketChannel, ServerSocketChannel, and DatagramChannel) create
-      a peer socket object when they are instantiated
-    *  These are the familiar classes from java.net
-      (Socket, ServerSocket, and DatagramSocket), which have been updated to be aware of
-      channels
-    * The peer socket can be obtained from a channel by invoking its socket( ) method.
-      Additionally, each of the java.net classes now has a getChannel( ) method
-    * Socket channels delegate protocol operations to the peer socket object
-    * Nonblocking Mode
-        * Readiness selection is a mechanism by which a channel can be queried to determine if it's
-          ready to perform an operation of interest, such as reading or writing.
-    * The ServerSocketChannel class is a channel-based socket listener. It performs the same basic
-          task as the familiar java.net.ServerSocket but adds channel semantics, including the ability to
-          operate in nonblocking mode.
-        * ServerSocketChannel doesn't have a bind( ) method, it's necessary to fetch the peer
-      socket and use it to bind to a port to begin listening for connections
-        * If invoked in nonblocking mode, ServerSocketChannel.accept( ) will immediately return null
-          if no incoming connections are currently pending. This ability to check for connections
-          without getting stuck is what enables scalability and reduces complexity. Selectability also
-          comes into play. A ServerSocketChannel object can be registered with a Selector instance to
-          enable notification when new connections arrive
+
+# Buffer Handling
+* buffers, and how buffers are handled, are the basis of all I/O
+* "input/output" means nothing more than moving data in and out of buffers
+* processes perform I/O by requesting of the operating system that data be drained from a buffer (write) 
+or that a buffer be filled with data (read)
+* steps:
+    1. the process requests that its buffer be filled by making the read( ) system call
+    1. kernel issuing a command to the disk controller hardware to fetch the data from disk
+    1. disk controller writes the data directly into a kernel memory buffer by DMA without further assistance from
+    the main CPU
+    1. kernel copies the data from the temporary buffer in kernel space to the buffer specified by the process when it
+    requested the read( ) operation
+* User space is a nonprivileged area: code executing there cannot directly access hardware devices
+* Kernel space is where the operating system lives. Kernel code has special privileges: it can communicate 
+with device controllers, manipulate the state of processes in user space, etc. Most importantly, 
+all I/O flows through kernel space
+* Why not tell the disk controller to send it directly to the buffer in user space?
+    * block-oriented hardware devices such as disk controllers operate on fixed-size data blocks 
+    * user process may be requesting an oddly sized or misaligned chunk of data 
+    * kernel plays the role of intermediary, breaking down and reassembling data as it moves between 
+    user space and storage devices
+* virtual memory means that artificial, or virtual, addresses are used in place of physical 
+(hardware RAM) memory addresses (simulates RAM)
+    1. More than one virtual address can refer to the same physical memory location.
+    2. A virtual memory space can be larger than the actual hardware memory available.
+    * it eliminates copies between kernel and user space by mapping a kernel space address to the same 
+    physical address as a virtual address in user space, the DMA hardware (which can access only physical 
+    memory addresses) can fill a buffer that is simultaneously visible to both the kernel and a user space process
+
+## NIO
+# buffers
+* Channels are portals through which I/O transfers
+take place, and buffers are the sources or targets of those data transfers. For outgoing
+transfers, data you want to send is placed in a buffer, which is passed to a channel. For 
+inbound transfers, a channel deposits data in a buffer you provide.
+* 0 <= mark <= position <= limit <= capacity
+* position attribute does this. It indicates where the next data element should be inserted
+  when calling put( ) or from where the next element should be retrieved when get( ) is invoked
+* buffer.put((byte)'H').put((byte)'e').put((byte)'l').put((byte)'l')
+  .put((byte)'o');
+  * mark: X
+  * position: 5
+  * limit: 10
+  * capacity: 10
+* We've filled the buffer, now we must prepare it for draining. We want to pass this buffer to a
+  channel so the content can be written out. But if the channel performs a get( ) on the buffer
+  now, it will fetch undefined data from beyond the good data we just inserted. If we set the
+  position back to 0, the channel will start fetching at the right place, but how will it know when
+  it has reached the end of the data we inserted? This is where the limit attribute comes in. The
+  limit indicates the end of the active buffer content
+* We need to set the limit to the current
+  position, then reset the position to 0
+* buffer.limit(buffer.position( )).position(0);
+* The flip( ) method flips a buffer from a fill state, where data elements can be appended, to a
+  drain state ready for elements to be read out
+* Following a flip - limit: 6
+* What if you flip a buffer twice? It effectively becomes zero-sized.
+* Buffers are not thread-safe
+# Channels
+* provide direct connections to I/O
+  services. A Channel is a conduit that transports data efficiently between byte buffers and the
+  entity on the other end of the channel (usually a file or socket)
+* socket
+  channel objects are bidirectional
+* The read( ) and write( ) methods of ByteChannel take ByteBuffer objects as arguments. Each
+  returns the number of bytes transferred, which can be less than the number of bytes in the
+  buffer, or even zero. The position of the buffer will have been advanced by the same amount.
+  If a partial transfer was performed, the buffer can be resubmitted to the channel to continue
+  transferring data where it left off. Repeat until the buffer's hasRemaining( ) method returns
+  false
+* Unlike buffers, channels cannot be reused. An open channel represents a specific connection
+  to a specific I/O service and encapsulates the state of that connection. When a channel is
+  closed, that connection is lost, and the channel is no longer connected to anything.
+* Scatter/gather is a simple yet powerful concept (see Section 1.4.1.1).
+  It refers to performing a single I/O operation across multiple buffers. For a write operation,
+  data is gathered (drained) from several buffers in turn and sent along the channel. The buffers
+  do not need to have the same capcity (and they usually don't). The effect is the same as if the
+  content of all the buffers was concatenated into one large buffer before being sent. For reads,
+  the data read from the channel is scattered to multiple buffers in sequence, filling each to its
+  limit, until the data from the channel or the total buffer space is exhausted
+  * ByteBuffer header = ByteBuffer.allocateDirect (10);
+    ByteBuffer body = ByteBuffer.allocateDirect (80);
+    ByteBuffer [] buffers = { header, body };
+    Java NIO
+    64
+    int bytesRead = channel.read (buffers);
+    Upon returning from read( ), bytesRead holds the value 48 , the header buffer contains the
+    first 10 bytes read from the channel, and body holds the following 38 bytes. The channel
+    automatically scattered the data into the two buffers.
+    *  It allows you to
+      delegate to the operating system the grunt work of separating out the data you read into
+      multiple buckets, or assembling disparate chunks of data into a whole. This can be a huge win
+      because the operating system is highly optimized for this sort of thing
+# Socket Channels
+* model network sockets
+* can operate in nonblocking mode and are selectable
+* it's no longer necessary to
+  dedicate a thread to each socket connection (and suffer the context-switching overhead of
+  managing large numbers of threads). Using the new NIO classes, one or a few threads can
+  manage hundreds or even thousands of active socket connections with little or no performance
+  loss.
+*  it's possible to perform
+  readiness selection of socket channels using a Selector object
+* you should understand the
+  relationship between sockets and socket channels. As described earlier, a channel is a conduit
+  to an I/O service and provides methods for interacting with that service. In the case of sockets,
+  the decision was made not to reimplement the socket protocol APIs in the corresponding
+  channel classes. The preexisting socket channels in java.net are reused for most protocol
+  operations.
+* All the socket channels (SocketChannel, ServerSocketChannel, and DatagramChannel) create
+  a peer socket object when they are instantiated
+*  These are the familiar classes from java.net
+  (Socket, ServerSocket, and DatagramSocket), which have been updated to be aware of
+  channels
+* The peer socket can be obtained from a channel by invoking its socket( ) method.
+  Additionally, each of the java.net classes now has a getChannel( ) method
+* Socket channels delegate protocol operations to the peer socket object
+* Nonblocking Mode
+    * Readiness selection is a mechanism by which a channel can be queried to determine if it's
+      ready to perform an operation of interest, such as reading or writing.
+* The ServerSocketChannel class is a channel-based socket listener. It performs the same basic
+      task as the familiar java.net.ServerSocket but adds channel semantics, including the ability to
+      operate in nonblocking mode.
+    * ServerSocketChannel doesn't have a bind( ) method, it's necessary to fetch the peer
+  socket and use it to bind to a port to begin listening for connections
+    * If invoked in nonblocking mode, ServerSocketChannel.accept( ) will immediately return null
+      if no incoming connections are currently pending. This ability to check for connections
+      without getting stuck is what enables scalability and reduces complexity. Selectability also
+      comes into play. A ServerSocketChannel object can be registered with a Selector instance to
+      enable notification when new connections arrive
 * The Socket and SocketChannel classes encapsulate point-to-point, ordered network
   connections similar to those provided by the familiar TCP/IP connections we all know and
   love. A SocketChannel acts as the client, initiating a connection to a listening server. It cannot
@@ -166,99 +163,98 @@ runtime optimizations), so
     guarantee that the bytes sent will arrive in the same order but make no promises about
     maintaining groupings. A sender may write 20 bytes to a socket, and the receiver gets only 3
     of those bytes when invoking read( ). The remaining 17 bytes may still be in transit.
-* Selectors provide the ability to do readiness selection,
-    which enables multiplexed I/O
-    * Imagine a bank with three drive-through lanes. In the traditional (nonselector)
-      scenario, imagine that each drive-through lane has a pneumatic tube that runs to its own teller
-      station inside the bank, and each station is walled off from the others. This means that each
-      tube (channel) requires a dedicated teller (worker thread). This approach doesn't scale well
-      and is wasteful. For each new tube (channel) added, a new teller is required, along with
-      associated overhead such as tables, chairs, paper clips (memory, CPU cycles, context
-      switching), etc. And when things are slow, these resources (which have associated costs) tend
-      to sit idle.
-    * Now imagine a different scenario in which each pneumatic tube (channel) is connected to
-      a single teller station inside the bank. The station has three slots where the carriers (data
-      buffers) arrive, each with an indicator (selection key) that lights up when the carrier is in
-      the slot. Also imagine that the teller (worker thread) has a sick cat and spends as much time as
-      possible reading Do It Yourself Taxidermy. 1 At the end of each paragraph, the teller glances
-      up at the indicator lights (invokes select( )) to determine if any of the channels are ready
-      (readiness selection). The teller (worker thread) can perform another task while
-      the drive-through lanes (channels) are idle yet still respond to them in a timely manner when
-      they require attention.
-    * it illustrates the paradigm of quickly checking to see if
-      attention is required by any of a set of resources, without being forced to wait if something
-      isn't ready to go. This ability to check and continue is key to scalability. A single thread can
-      monitor large numbers of channels with readiness selection. The Selector and related classes
-      provide the APIs to do readiness selection on channels
-    *  You register one or
-      more previously created selectable channels with a selector object. A key that represents the
-      relationship between one channel and one selector is returned. Selection keys remember what
-      you are interested in for each channel. They also track the operations of interest that their
-      channel is currently ready to perform. When you invoke select( ) on a selector object, the
-      associated keys are updated by checking all the channels registered with that selector. You
-      can obtain a set of the keys whose channels were found to be ready at that point. By iterating
-      over these keys, you can service each channel that has become ready since the last time you
-      invoked select( ).
-    * At the most fundamental level, selectors provide the capability to ask a channel if it's ready to
-      perform an I/O operation of interest to you. For example, a SocketChannel object could be
-      asked if it has any bytes ready to read, or we may want to know if a ServerSocketChannel has
-      any incoming connections ready to accept.
-    * Selectors provide this service when used in conjunction with SelectableChannel objects, but
-      there's more to the story than that. The real power of readiness selection is that a potentially
-      large number of channels can be checked for readiness simultaneously. The caller can easily
-      determine which of several channels are ready to go
-    * traditional Java solution to monitoring multiple sockets has been to create a
-      thread for each and allow the thread to block in a read( ) until data is available. This
-      effectively makes each blocked thread a socket monitor and the JVM's thread scheduler
-      becomes the notification mechanism
-    * True readiness selection must be done by the operating system. One of the most important
-      functions performed by an operating system is to handle I/O requests and notify processes
-      when their data is ready. So it only makes sense to delegate this function down to the
-      operating system. The Selector class provides the abstraction by which Java code can request
-      readiness selection service from the underlying operating system in a portable way.
-    * Selector
-      The Selector class manages information about a set of registered channels and their
-      readiness states. Channels are registered with selectors, and a selector can be asked to
-      update the readiness states of the channels currently registered with it. When doing so,
-      the invoking thread can optionally indicate that it would prefer to be suspended until
-      one of the registered channels is ready.
-    * SelectionKey
-      A SelectionKey encapsulates the registration relationship between a specific channel
-      and a specific selector. A SelectionKey object is returned from
-      SelectableChannel.register( ) and serves as a token representing the registration.
-      SelectionKey objects contain two bit sets (encoded as integers) indicating which
-      channel operations the registrant has an interest in and which operations the channel is
-      ready to perform.
-    * Although the register( ) method is defined on the SelectableChannel class, channels are
-      registered with selectors, not the other way around. A selector maintains a set of channels to
-      monitor. A given channel can be registered with more than one selector and has no idea which
-      Selector objects it's currently registered with. The choice to put the register( ) method in
-      SelectableChannel rather than in Selector was somewhat arbitrary. It returns a SelectionKey
-      object that encapsulates a relationship between the two objects. The important thing is to
-      remember that the Selector object controls the selection process for the channels registered
-      with it.
-    * Selectors are the managing objects, not the selectable channel objects.
-      The Selector object performs readiness selection of channels registered
-      with it and manages selection keys.
-    * Selectors are not
-      primary I/O objects like channels or streams: data never passes through them
-    * ops - This is a bit
-            mask that represents the I/O operations that the selector should test for when checking the
-            readiness of that channel
+# Selectors provide the ability to do readiness selection, which enables multiplexed I/O
+* Imagine a bank with three drive-through lanes. In the traditional (nonselector)
+  scenario, imagine that each drive-through lane has a pneumatic tube that runs to its own teller
+  station inside the bank, and each station is walled off from the others. This means that each
+  tube (channel) requires a dedicated teller (worker thread). This approach doesn't scale well
+  and is wasteful. For each new tube (channel) added, a new teller is required, along with
+  associated overhead such as tables, chairs, paper clips (memory, CPU cycles, context
+  switching), etc. And when things are slow, these resources (which have associated costs) tend
+  to sit idle.
+* Now imagine a different scenario in which each pneumatic tube (channel) is connected to
+  a single teller station inside the bank. The station has three slots where the carriers (data
+  buffers) arrive, each with an indicator (selection key) that lights up when the carrier is in
+  the slot. Also imagine that the teller (worker thread) has a sick cat and spends as much time as
+  possible reading Do It Yourself Taxidermy. 1 At the end of each paragraph, the teller glances
+  up at the indicator lights (invokes select( )) to determine if any of the channels are ready
+  (readiness selection). The teller (worker thread) can perform another task while
+  the drive-through lanes (channels) are idle yet still respond to them in a timely manner when
+  they require attention.
+* it illustrates the paradigm of quickly checking to see if
+  attention is required by any of a set of resources, without being forced to wait if something
+  isn't ready to go. This ability to check and continue is key to scalability. A single thread can
+  monitor large numbers of channels with readiness selection. The Selector and related classes
+  provide the APIs to do readiness selection on channels
+*  You register one or
+  more previously created selectable channels with a selector object. A key that represents the
+  relationship between one channel and one selector is returned. Selection keys remember what
+  you are interested in for each channel. They also track the operations of interest that their
+  channel is currently ready to perform. When you invoke select( ) on a selector object, the
+  associated keys are updated by checking all the channels registered with that selector. You
+  can obtain a set of the keys whose channels were found to be ready at that point. By iterating
+  over these keys, you can service each channel that has become ready since the last time you
+  invoked select( ).
+* At the most fundamental level, selectors provide the capability to ask a channel if it's ready to
+  perform an I/O operation of interest to you. For example, a SocketChannel object could be
+  asked if it has any bytes ready to read, or we may want to know if a ServerSocketChannel has
+  any incoming connections ready to accept.
+* Selectors provide this service when used in conjunction with SelectableChannel objects, but
+  there's more to the story than that. The real power of readiness selection is that a potentially
+  large number of channels can be checked for readiness simultaneously. The caller can easily
+  determine which of several channels are ready to go
+* traditional Java solution to monitoring multiple sockets has been to create a
+  thread for each and allow the thread to block in a read( ) until data is available. This
+  effectively makes each blocked thread a socket monitor and the JVM's thread scheduler
+  becomes the notification mechanism
+* True readiness selection must be done by the operating system. One of the most important
+  functions performed by an operating system is to handle I/O requests and notify processes
+  when their data is ready. So it only makes sense to delegate this function down to the
+  operating system. The Selector class provides the abstraction by which Java code can request
+  readiness selection service from the underlying operating system in a portable way.
+* Selector
+  The Selector class manages information about a set of registered channels and their
+  readiness states. Channels are registered with selectors, and a selector can be asked to
+  update the readiness states of the channels currently registered with it. When doing so,
+  the invoking thread can optionally indicate that it would prefer to be suspended until
+  one of the registered channels is ready.
 * SelectionKey
-    * a key represents the registration of a particular channel object with a
-      particular selector object. You can see that relationship reflected in the first two methods
-      above. The channel( ) method returns the SelectableChannel object associated with the key,
-      and selector( ) returns the associated Selector object
-    * A SelectionKey object contains two sets encoded as integer bit masks: one for those
-      operations of interest to the channel/selector combination (the interest set) and one
-      representing operations the channel is currently ready to perform (the ready set).
-    *  there are currently four channel operations that can be tested for readiness.
-        * isReadable( ),
-          isWritable( ), isConnectable( ), and isAcceptable( )
-    * The ready set contained by a SelectionKey object is as of the time the
-      selector last checked the states of the registered channels. The readiness
-      of individual channels could have changed in the meantime.
+  A SelectionKey encapsulates the registration relationship between a specific channel
+  and a specific selector. A SelectionKey object is returned from
+  SelectableChannel.register( ) and serves as a token representing the registration.
+  SelectionKey objects contain two bit sets (encoded as integers) indicating which
+  channel operations the registrant has an interest in and which operations the channel is
+  ready to perform.
+* Although the register( ) method is defined on the SelectableChannel class, channels are
+  registered with selectors, not the other way around. A selector maintains a set of channels to
+  monitor. A given channel can be registered with more than one selector and has no idea which
+  Selector objects it's currently registered with. The choice to put the register( ) method in
+  SelectableChannel rather than in Selector was somewhat arbitrary. It returns a SelectionKey
+  object that encapsulates a relationship between the two objects. The important thing is to
+  remember that the Selector object controls the selection process for the channels registered
+  with it.
+* Selectors are the managing objects, not the selectable channel objects.
+  The Selector object performs readiness selection of channels registered
+  with it and manages selection keys.
+* Selectors are not
+  primary I/O objects like channels or streams: data never passes through them
+* ops - This is a bit
+        mask that represents the I/O operations that the selector should test for when checking the
+        readiness of that channel
+# SelectionKey
+* a key represents the registration of a particular channel object with a
+  particular selector object. You can see that relationship reflected in the first two methods
+  above. The channel( ) method returns the SelectableChannel object associated with the key,
+  and selector( ) returns the associated Selector object
+* A SelectionKey object contains two sets encoded as integer bit masks: one for those
+  operations of interest to the channel/selector combination (the interest set) and one
+  representing operations the channel is currently ready to perform (the ready set).
+*  there are currently four channel operations that can be tested for readiness.
+    * isReadable( ),
+      isWritable( ), isConnectable( ), and isAcceptable( )
+* The ready set contained by a SelectionKey object is as of the time the
+  selector last checked the states of the registered channels. The readiness
+  of individual channels could have changed in the meantime.
 * Each Selector object maintains
   three sets of keys:
   Registered key set
