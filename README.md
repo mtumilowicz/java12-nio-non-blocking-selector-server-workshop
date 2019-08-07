@@ -56,17 +56,15 @@ or that a buffer be filled with data (read)
 
 ## NIO
 # buffers
-* Channels are portals through which I/O transfers
-take place, and buffers are the sources or targets of those data transfers. For outgoing
-transfers, data you want to send is placed in a buffer, which is passed to a channel. For 
-inbound transfers, a channel deposits data in a buffer you provide.
+* channels are portals through which I/O transfers take place, and buffers are the sources or targets 
+of those data transfers
+* for outgoing transfers, data you want to send is placed in a buffer, which is passed to a channel
+* for inbound transfers, a channel deposits data in a buffer you provide.
 * 0 <= mark <= position <= limit <= capacity
-* position attribute does this. It indicates where the next data element should be inserted
-  when calling put( ) or from where the next element should be retrieved when get( ) is invoked
-* buffer.put((byte)'H').put((byte)'e').put((byte)'l').put((byte)'l')
-  .put((byte)'o');
-  * mark: X
-  * position: 5
+* position attribute indicates where the next data element should be inserted ( put() ) / retrieved ( get() )
+* buffer.put((byte)'M').put((byte)'i').put((byte)'c').put((byte)'h').put((byte)'a').put((byte)'l')
+  * mark: X (undefined)
+  * position: 6
   * limit: 10
   * capacity: 10
 * We've filled the buffer, now we must prepare it for draining. We want to pass this buffer to a
@@ -75,49 +73,48 @@ inbound transfers, a channel deposits data in a buffer you provide.
   position back to 0, the channel will start fetching at the right place, but how will it know when
   it has reached the end of the data we inserted? This is where the limit attribute comes in. The
   limit indicates the end of the active buffer content
-* We need to set the limit to the current
-  position, then reset the position to 0
-* buffer.limit(buffer.position( )).position(0);
-* The flip( ) method flips a buffer from a fill state, where data elements can be appended, to a
-  drain state ready for elements to be read out
+* We need to set the limit to the current position, then reset the position to 0
+    * buffer.limit(buffer.position( )).position(0);
+    * The flip( ) method flips a buffer from a fill state, where data elements can be appended, to a
+    drain state ready for elements to be read out
 * Following a flip - limit: 6
 * What if you flip a buffer twice? It effectively becomes zero-sized.
 * Buffers are not thread-safe
 # Channels
-* provide direct connections to I/O
-  services. A Channel is a conduit that transports data efficiently between byte buffers and the
+* provide direct connections to I/O services
+* channel is a conduit that transports data efficiently between byte buffers and the
   entity on the other end of the channel (usually a file or socket)
-* socket
-  channel objects are bidirectional
+* socket channel objects are bidirectional
 * The read( ) and write( ) methods of ByteChannel take ByteBuffer objects as arguments. Each
   returns the number of bytes transferred, which can be less than the number of bytes in the
   buffer, or even zero. The position of the buffer will have been advanced by the same amount.
   If a partial transfer was performed, the buffer can be resubmitted to the channel to continue
-  transferring data where it left off. Repeat until the buffer's hasRemaining( ) method returns
+  transferring data where it left off. Repeat until the buffer's `hasRemaining( )` method returns
   false
-* Unlike buffers, channels cannot be reused. An open channel represents a specific connection
-  to a specific I/O service and encapsulates the state of that connection. When a channel is
-  closed, that connection is lost, and the channel is no longer connected to anything.
-* Scatter/gather is a simple yet powerful concept (see Section 1.4.1.1).
-  It refers to performing a single I/O operation across multiple buffers. For a write operation,
-  data is gathered (drained) from several buffers in turn and sent along the channel. The buffers
-  do not need to have the same capcity (and they usually don't). The effect is the same as if the
-  content of all the buffers was concatenated into one large buffer before being sent. For reads,
-  the data read from the channel is scattered to multiple buffers in sequence, filling each to its
-  limit, until the data from the channel or the total buffer space is exhausted
-  * ByteBuffer header = ByteBuffer.allocateDirect (10);
-    ByteBuffer body = ByteBuffer.allocateDirect (80);
-    ByteBuffer [] buffers = { header, body };
-    Java NIO
-    64
-    int bytesRead = channel.read (buffers);
-    Upon returning from read( ), bytesRead holds the value 48 , the header buffer contains the
-    first 10 bytes read from the channel, and body holds the following 38 bytes. The channel
-    automatically scattered the data into the two buffers.
-    *  It allows you to
-      delegate to the operating system the grunt work of separating out the data you read into
-      multiple buckets, or assembling disparate chunks of data into a whole. This can be a huge win
-      because the operating system is highly optimized for this sort of thing
+* cannot be reused - represents a specific connection to a specific I/O service and encapsulates 
+the state of that connection 
+* When a channel is closed, that connection is lost, and the channel is no longer connected to anything.
+* Scatter/gather is a simple yet powerful concept
+    * It refers to performing a single I/O operation across multiple buffers. 
+    * For a write operation, data is gathered (drained) from several buffers in turn and sent 
+    along the channel. The buffers do not need to have the same capcity (and they usually don't). 
+    The effect is the same as if the content of all the buffers was concatenated into one large 
+    buffer before being sent. For reads, the data read from the channel is scattered to multiple 
+    buffers in sequence, filling each to its limit, until the data from the channel or the total buffer space is exhausted
+    * example
+        ```
+        ByteBuffer header = ByteBuffer.allocateDirect (10);
+        ByteBuffer body = ByteBuffer.allocateDirect (80);
+        ByteBuffer [] buffers = { header, body };
+        int bytesRead = channel.read (buffers);
+        ```
+        * Upon returning from read( ), bytesRead holds the value 48 , the header buffer contains the
+          first 10 bytes read from the channel, and body holds the following 38 bytes. The channel
+          automatically scattered the data into the two buffers.
+        * It allows you to
+          delegate to the operating system the grunt work of separating out the data you read into
+          multiple buckets, or assembling disparate chunks of data into a whole. This can be a huge win
+          because the operating system is highly optimized for this sort of thing
 # Socket Channels
 * model network sockets
 * can operate in nonblocking mode and are selectable
