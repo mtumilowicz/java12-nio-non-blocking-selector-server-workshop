@@ -41,7 +41,7 @@ or that a buffer be filled with data (read)
 * kernel space is where the operating system lives
     * communication with device controllers
     * all I/O flows through kernel space
-* Why not tell the disk controller to send it directly to the buffer in user space?
+* why disk controller not send directly to the buffer in user space?
     * block-oriented hardware devices such as disk controllers operate on fixed-size data blocks 
     * user process may be requesting an oddly sized chunk of data 
     * kernel plays the role of intermediary, breaking down and reassembling data as it moves between 
@@ -58,28 +58,32 @@ or that a buffer be filled with data (read)
 # buffers
 * channels are portals through which I/O transfers take place, and buffers are the sources or targets 
 of those data transfers
+* buffers are not thread-safe
 * for outgoing transfers, data you want to send is placed in a buffer, which is passed to a channel
-* for inbound transfers, a channel deposits data in a buffer you provide.
+* for inbound transfers, a channel deposits data in a buffer you provide
 * 0 <= mark <= position <= limit <= capacity
-* position attribute indicates where the next data element should be inserted ( put() ) / retrieved ( get() )
-* buffer.put((byte)'M').put((byte)'i').put((byte)'c').put((byte)'h').put((byte)'a').put((byte)'l')
-  * mark: X (undefined)
-  * position: 6
-  * limit: 10
-  * capacity: 10
-* We've filled the buffer, now we must prepare it for draining. We want to pass this buffer to a
-  channel so the content can be written out. But if the channel performs a get( ) on the buffer
-  now, it will fetch undefined data from beyond the good data we just inserted. If we set the
-  position back to 0, the channel will start fetching at the right place, but how will it know when
-  it has reached the end of the data we inserted? This is where the limit attribute comes in. The
-  limit indicates the end of the active buffer content
-* We need to set the limit to the current position, then reset the position to 0
-    * buffer.limit(buffer.position( )).position(0);
-    * The flip( ) method flips a buffer from a fill state, where data elements can be appended, to a
-    drain state ready for elements to be read out
-* Following a flip - limit: 6
-* What if you flip a buffer twice? It effectively becomes zero-sized.
-* Buffers are not thread-safe
+* position attribute indicates where the next data element should be inserted ( `put()` ) / retrieved ( `get()` )
+* example
+    ```
+    buffer.put((byte)'M').put((byte)'i').put((byte)'c').put((byte)'h').put((byte)'a').put((byte)'l')
+    ```
+    * mark: X (undefined)
+    * position: 6
+    * limit: 10
+    * capacity: 10
+* how to prepare buffer for draining?
+    * we should pass this buffer to a channel
+    * if the channel performs a `get()` it will fetch undefined data also
+    * if we set position back to 0 - we will fetch correct data but we don't know when we should end
+    * we should use `limit` property - it indicates the end of the data
+    * we need to set the limit to the current position, then reset the position to 0
+        ```
+        buffer.limit(buffer.position()).position(0);
+        ```
+    * `flip()` method do practically the same - it flips a buffer from a fill state, where data elements 
+    can be appended, to a drain state ready for elements to be read out
+* if you flip a buffer twice it becomes zero-sized
+
 # Channels
 * provide direct connections to I/O services
 * channel is a conduit that transports data efficiently between byte buffers and the
