@@ -38,19 +38,19 @@ or that a buffer be filled with data (read)
     1. kernel copies the data from the temporary buffer in kernel space to the buffer specified by the process when it
     requested the read( ) operation
 * User space is a nonprivileged area: code executing there cannot directly access hardware devices
-* Kernel space is where the operating system lives. Kernel code has special privileges: it can communicate 
-with device controllers, manipulate the state of processes in user space, etc. Most importantly, 
-all I/O flows through kernel space
+* kernel space is where the operating system lives
+    * communication with device controllers
+    * all I/O flows through kernel space
 * Why not tell the disk controller to send it directly to the buffer in user space?
     * block-oriented hardware devices such as disk controllers operate on fixed-size data blocks 
-    * user process may be requesting an oddly sized or misaligned chunk of data 
+    * user process may be requesting an oddly sized chunk of data 
     * kernel plays the role of intermediary, breaking down and reassembling data as it moves between 
     user space and storage devices
 * virtual memory means that artificial, or virtual, addresses are used in place of physical 
 (hardware RAM) memory addresses (simulates RAM)
-    1. More than one virtual address can refer to the same physical memory location.
-    2. A virtual memory space can be larger than the actual hardware memory available.
-    * it eliminates copies between kernel and user space by mapping a kernel space address to the same 
+    * more than one virtual address can refer to the same physical memory location
+    * virtual memory space can be larger than the actual hardware memory available
+    * eliminates copies between kernel and user space by mapping a kernel space address to the same 
     physical address as a virtual address in user space, the DMA hardware (which can access only physical 
     memory addresses) can fill a buffer that is simultaneously visible to both the kernel and a user space process
 
