@@ -6,15 +6,20 @@ _Reference_: http://www.java2s.com/Tutorials/Java/Socket/How_to_use_Java_SocketC
 _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
 
 # introduction
-* I/O is often the limiting factor in application performance, not processing speed
-    * CPU intense tasks - adding more threads than cores will have harmful effect on performance,
-    suppose that processor works at full power and we force it to do context switches
-    * I/O waiting - adding more threads could be beneficial - context switches are not so harmful
-    if thread is only waiting
 * current JVMs run bytecode at speeds approaching that of natively compiled code or even better (dynamic 
 runtime optimizations), so
     * applications are no longer CPU bound (spending most of their time executing code) 
     * they are I/O bound (waiting for data transfers)
+* how to adjust number of threads
+    * CPU intense tasks - adding more threads than cores will have harmful effect on performance,
+    suppose that processor works at full power and we force it to do context switches
+    * I/O waiting - adding more threads could be beneficial - context switches are not so harmful
+    if thread is only waiting
+    * `Nthreads = NCPU * UCPU * (1 + W/C)`
+        * NCPU is the number of cores, available through 
+        `Runtime.getRuntime().availableProcessors()`
+        * UCPU is the target CPU utilization (between 0 and 1), and
+        * W/C is the ratio of wait time to compute time
 * operating system vs Java stream-based I/O model
     * operating system wants to move data in large chunks (buffers)
     * I/O classes of the JVM operates on small pieces — single bytes, or lines of text
@@ -31,12 +36,12 @@ runtime optimizations), so
 * processes perform I/O by requesting of the operating system that data be drained from a buffer (write) 
 or that a buffer be filled with data (read)
 * steps:
-    1. the process requests that its buffer be filled by making the read( ) system call
+    1. the process requests that its buffer be filled by making the `read()` system call
     1. kernel issuing a command to the disk controller hardware to fetch the data from disk
     1. disk controller writes the data directly into a kernel memory buffer by DMA without further assistance from
     the main CPU
     1. kernel copies the data from the temporary buffer in kernel space to the buffer specified by the process when it
-    requested the read( ) operation
+    requested the `read()` operation
 * User space is a nonprivileged area: code executing there cannot directly access hardware devices
 * kernel space is where the operating system lives
     * communication with device controllers
@@ -55,78 +60,26 @@ or that a buffer be filled with data (read)
     memory addresses) can fill a buffer that is simultaneously visible to both the kernel and a user space process
 
 ## NIO
-# buffers
-* channels are portals through which I/O transfers take place, and buffers are the sources or targets 
-of those data transfers
-* buffers are not thread-safe
-* for outgoing transfers, data you want to send is placed in a buffer, which is passed to a channel
-* for inbound transfers, a channel deposits data in a buffer you provide
-* 0 <= mark <= position <= limit <= capacity
-* position attribute indicates where the next data element should be inserted ( `put()` ) / retrieved ( `get()` )
-* example
-    ```
-    buffer.put((byte)'M').put((byte)'i').put((byte)'c').put((byte)'h').put((byte)'a').put((byte)'l')
-    ```
-    * mark: X (undefined)
-    * position: 6
-    * limit: 10
-    * capacity: 10
-* how to prepare buffer for draining?
-    * we should pass this buffer to a channel
-    * if the channel performs a `get()` it will fetch undefined data also
-    * if we set position back to 0 - we will fetch correct data but we don't know when we should end
-    * we should use `limit` property - it indicates the end of the data
-    * we need to set the limit to the current position, then reset the position to 0
-        ```
-        buffer.limit(buffer.position()).position(0);
-        ```
-    * `flip()` method do practically the same - it flips a buffer from a fill state, where data elements 
-    can be appended, to a drain state ready for elements to be read out
-* if you flip a buffer twice it becomes zero-sized
-
 # Channels
 * provide direct connections to I/O services
 * conduit that transports data between byte buffers and the entity on the other end of the channel 
 (a hardware device, a file or socket)
 * socket channel objects are bidirectional
 * `read()` and `write()` returns the number of bytes transferred, which can be less than the number 
-of bytes in the
-  buffer, or even zero. The position of the buffer will have been advanced by the same amount.
-  * if a partial transfer was performed, the buffer can be resubmitted to the channel to continue
-  transferring data where it left off and repeated until the buffer's `hasRemaining( )` method returns
-  false
+of bytes in the buffer, or even zero
+    * the position of the buffer will have been advanced by the same amount
+    * if a partial transfer was performed, the buffer can be resubmitted to the channel to continue
+    transferring data where it left off and repeated until the buffer's `hasRemaining( )` method returns
+    false
 * cannot be reused - represents a specific connection to a specific I/O service and encapsulates 
 the state of that connection 
 * when a channel is closed, that connection is lost, and the channel is no longer connected to anything
-* scatter/gather is a simple yet powerful concept
-    * performs a single I/O operation across multiple buffers
-    * for a write operation, data is gathered (drained) from several buffers in turn and sent 
-    along the channel. The buffers do not need to have the same capcity (and they usually don't). 
-    The effect is the same as if the content of all the buffers was concatenated into one large 
-    buffer before being sent. 
-    * for reads, the data read from the channel is scattered to multiple 
-    buffers in sequence, filling each to its limit, until the data from the channel or the total 
-    buffer space is exhausted
-    * example
-        ```
-        ByteBuffer header = ByteBuffer.allocateDirect (10);
-        ByteBuffer body = ByteBuffer.allocateDirect (80);
-        ByteBuffer [] buffers = { header, body };
-        int bytesRead = channel.read (buffers);
-        ```
-        * Upon returning from read( ), bytesRead holds the value 48 , the header buffer contains the
-          first 10 bytes read from the channel, and body holds the following 38 bytes. The channel
-          automatically scattered the data into the two buffers.
-        * It allows you to
-          delegate to the operating system the grunt work of separating out the data you read into
-          multiple buckets, or assembling disparate chunks of data into a whole. This can be a huge win
-          because the operating system is highly optimized for this sort of thing
-          
+
 # Socket Channels
 * models network sockets
 * can operate in nonblocking mode and are selectable
 * it's no longer necessary to dedicate a thread to each socket connection 
-(and suffer the context-switching overhead of managing large numbers of threads). 
+(and suffer the context-switching overhead of managing large numbers of threads)
 * Using the new NIO classes, one or a few threads can manage hundreds or even thousands of active socket 
 connections with little or no performance loss
 * it's possible to perform readiness selection of socket channels using a `Selector` object
