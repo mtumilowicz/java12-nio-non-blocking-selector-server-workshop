@@ -61,63 +61,32 @@ or that a buffer be filled with data (read)
 
 ## NIO
 # Channels
-* provide direct connections to I/O services
-* conduit that transports data between byte buffers and the entity on the other end of the channel 
-(a hardware device, a file or socket)
+* is a conduit to an I/O service (a hardware device, a file or socket) and provides methods for 
+interacting with that service
 * socket channel objects are bidirectional
-* `read()` and `write()` returns the number of bytes transferred, which can be less than the number 
-of bytes in the buffer, or even zero
-    * the position of the buffer will have been advanced by the same amount
-    * if a partial transfer was performed, the buffer can be resubmitted to the channel to continue
-    transferring data where it left off and repeated until the buffer's `hasRemaining( )` method returns
-    false
+* if a partial transfer was performed, the buffer can be resubmitted to the channel to continue
+transferring data where it left off and repeated until the buffer's `hasRemaining( )` method returns
+false
 * cannot be reused - represents a specific connection to a specific I/O service and encapsulates 
 the state of that connection 
-* when a channel is closed, that connection is lost, and the channel is no longer connected to anything
+* when a channel is closed - connection is lost
 
 # Socket Channels
 * models network sockets
 * can operate in nonblocking mode and are selectable
 * it's no longer necessary to dedicate a thread to each socket connection 
-(and suffer the context-switching overhead of managing large numbers of threads)
-* Using the new NIO classes, one or a few threads can manage hundreds or even thousands of active socket 
-connections with little or no performance loss
 * it's possible to perform readiness selection of socket channels using a `Selector` object
-* you should understand the
-  relationship between sockets and socket channels. As described earlier, a channel is a conduit
-  to an I/O service and provides methods for interacting with that service. In the case of sockets,
-  the decision was made not to reimplement the socket protocol APIs in the corresponding
-  channel classes. The preexisting socket channels in java.net are reused for most protocol
-  operations.
-* All the socket channels (SocketChannel, ServerSocketChannel, and DatagramChannel) create
-  a peer socket object when they are instantiated
-*  These are the familiar classes from java.net
-  (Socket, ServerSocket, and DatagramSocket), which have been updated to be aware of
-  channels
-* The peer socket can be obtained from a channel by invoking its socket( ) method.
-  Additionally, each of the java.net classes now has a getChannel( ) method
+* `SocketChannel`, `ServerSocketChannel` create a peer socket object when they are instantiated
+    * classes from `java.net`: `Socket`, `ServerSocket`, which have been updated to be aware of channels
 * Socket channels delegate protocol operations to the peer socket object
-* Nonblocking Mode
-    * Readiness selection is a mechanism by which a channel can be queried to determine if it's
-      ready to perform an operation of interest, such as reading or writing.
-* The ServerSocketChannel class is a channel-based socket listener. It performs the same basic
-      task as the familiar java.net.ServerSocket but adds channel semantics, including the ability to
-      operate in nonblocking mode.
-    * ServerSocketChannel doesn't have a bind( ) method, it's necessary to fetch the peer
-  socket and use it to bind to a port to begin listening for connections
-    * If invoked in nonblocking mode, ServerSocketChannel.accept( ) will immediately return null
-      if no incoming connections are currently pending. This ability to check for connections
-      without getting stuck is what enables scalability and reduces complexity. Selectability also
-      comes into play. A ServerSocketChannel object can be registered with a Selector instance to
-      enable notification when new connections arrive
-* The Socket and SocketChannel classes encapsulate point-to-point, ordered network
-  connections similar to those provided by the familiar TCP/IP connections we all know and
-  love. A SocketChannel acts as the client, initiating a connection to a listening server. It cannot
-  receive until connected and then only from the address to which the connection was made
-  * Keep in mind that sockets are stream-oriented, not packet-oriented. They
-    guarantee that the bytes sent will arrive in the same order but make no promises about
-    maintaining groupings. A sender may write 20 bytes to a socket, and the receiver gets only 3
-    of those bytes when invoking read( ). The remaining 17 bytes may still be in transit.
+    * `ServerSocketChannel` doesn't have a `bind()` method, it's necessary to fetch the peer
+      socket and use it to bind to a port to begin listening for connections
+* readiness selection is a mechanism by which a channel can be queried to determine if it's
+ready to perform an operation of interest, such as reading or writing.
+* sockets are stream-oriented, not packet-oriented
+    * bytes sent will arrive in the same order, but
+    * sender may write 20 bytes to a socket, and the receiver gets only 3
+    when invoking read( ) - remaining part may still be in transit
     
 # Selectors provide the ability to do readiness selection, which enables multiplexed I/O
 * Imagine a bank with three drive-through lanes. In the traditional (nonselector)
