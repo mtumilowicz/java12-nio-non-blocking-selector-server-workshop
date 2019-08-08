@@ -85,8 +85,8 @@ the state of that connection
 ready to perform an operation of interest, such as reading or writing.
 * sockets are stream-oriented, not packet-oriented
     * bytes sent will arrive in the same order, but
-    * sender may write 20 bytes to a socket, and the receiver gets only 3
-    when invoking read( ) - remaining part may still be in transit
+    * sender may write 20 bytes to a socket, and the receiver gets only 3 when invoking `read()` 
+    - remaining part may still be in transit
     
 # Selectors provide the ability to do readiness selection, which enables multiplexed I/O
 * Imagine a bank with three drive-through lanes. In the traditional (nonselector)
