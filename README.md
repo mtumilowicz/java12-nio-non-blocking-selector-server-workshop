@@ -144,20 +144,21 @@ ready to perform an operation of interest, such as reading or writing.
         
 # SelectionKey
 * a key represents the registration of a particular channel object with a
-  particular selector object. You can see that relationship reflected in the first two methods
-  above. The channel( ) method returns the SelectableChannel object associated with the key,
-  and selector( ) returns the associated Selector object
+  particular selector object. 
+  * channel()
+  * selector()
 * A SelectionKey object contains two sets encoded as integer bit masks: one for those
   operations of interest to the channel/selector combination (the interest set) and one
   representing operations the channel is currently ready to perform (the ready set).
-*  there are currently four channel operations that can be tested for readiness.
-    * isReadable( ),
-      isWritable( ), isConnectable( ), and isAcceptable( )
+* operations:
+    * `isReadable()`,
+    * `isWritable()`, 
+    * `isConnectable()`,
+    * `isAcceptable()`
 * The ready set contained by a SelectionKey object is as of the time the
   selector last checked the states of the registered channels. The readiness
   of individual channels could have changed in the meantime.
-* Each Selector object maintains
-  three sets of keys:
+* Each Selector object maintains three sets of keys:
   Registered key set
   The set of currently registered keys associated with the selector. Not every registered
   key is necessarily still valid. This set is returned by the keys( ) method and may be
@@ -177,8 +178,6 @@ ready to perform an operation of interest, such as reading or writing.
   A subset of the registered key set, this set contains keys whose cancel( ) methods have
   been called (the key has been invalidated), but they have not been deregistered. This
   set is private to the selector object and cannot be accessed directly.
-* Essentially, selectors are a wrapper for a native call to
-  select( ), poll( ), or a similar operating system-specific system call
 * following three steps are performed:
   1. The cancelled key set is checked. If it's nonempty, each key in the cancelled set is
   removed from the other two sets, and the channel associated with the cancelled key is
