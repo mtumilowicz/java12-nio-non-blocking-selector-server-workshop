@@ -88,7 +88,9 @@ ready to perform an operation of interest, such as reading or writing.
     * sender may write 20 bytes to a socket, and the receiver gets only 3 when invoking `read()` 
     - remaining part may still be in transit
     
-# Selectors provide the ability to do readiness selection, which enables multiplexed I/O
+# Selectors 
+* provide the ability to do readiness selection, which enables multiplexed I/O
+* controls the selection process for the channels registered with it
 * Imagine a bank with three drive-through lanes. In the traditional (nonselector)
   scenario, imagine that each drive-through lane has a pneumatic tube that runs to its own teller
   station inside the bank, and each station is walled off from the others. This means that each
@@ -106,12 +108,7 @@ ready to perform an operation of interest, such as reading or writing.
   (readiness selection). The teller (worker thread) can perform another task while
   the drive-through lanes (channels) are idle yet still respond to them in a timely manner when
   they require attention.
-* it illustrates the paradigm of quickly checking to see if
-  attention is required by any of a set of resources, without being forced to wait if something
-  isn't ready to go. This ability to check and continue is key to scalability. A single thread can
-  monitor large numbers of channels with readiness selection. The Selector and related classes
-  provide the APIs to do readiness selection on channels
-*  You register one or
+* You register one or
   more previously created selectable channels with a selector object. A key that represents the
   relationship between one channel and one selector is returned. Selection keys remember what
   you are interested in for each channel. They also track the operations of interest that their
@@ -120,52 +117,30 @@ ready to perform an operation of interest, such as reading or writing.
   can obtain a set of the keys whose channels were found to be ready at that point. By iterating
   over these keys, you can service each channel that has become ready since the last time you
   invoked select( ).
-* At the most fundamental level, selectors provide the capability to ask a channel if it's ready to
-  perform an I/O operation of interest to you. For example, a SocketChannel object could be
-  asked if it has any bytes ready to read, or we may want to know if a ServerSocketChannel has
-  any incoming connections ready to accept.
-* Selectors provide this service when used in conjunction with SelectableChannel objects, but
-  there's more to the story than that. The real power of readiness selection is that a potentially
-  large number of channels can be checked for readiness simultaneously. The caller can easily
-  determine which of several channels are ready to go
-* traditional Java solution to monitoring multiple sockets has been to create a
-  thread for each and allow the thread to block in a read( ) until data is available. This
-  effectively makes each blocked thread a socket monitor and the JVM's thread scheduler
-  becomes the notification mechanism
-* True readiness selection must be done by the operating system. One of the most important
-  functions performed by an operating system is to handle I/O requests and notify processes
-  when their data is ready. So it only makes sense to delegate this function down to the
-  operating system. The Selector class provides the abstraction by which Java code can request
-  readiness selection service from the underlying operating system in a portable way.
-* Selector
-  The Selector class manages information about a set of registered channels and their
-  readiness states. Channels are registered with selectors, and a selector can be asked to
-  update the readiness states of the channels currently registered with it. When doing so,
-  the invoking thread can optionally indicate that it would prefer to be suspended until
-  one of the registered channels is ready.
-* SelectionKey
-  A SelectionKey encapsulates the registration relationship between a specific channel
-  and a specific selector. A SelectionKey object is returned from
-  SelectableChannel.register( ) and serves as a token representing the registration.
-  SelectionKey objects contain two bit sets (encoded as integers) indicating which
+* selectors provide the capability to ask a channel if it's ready to
+  perform an I/O operation of interest to you
+  * for example - check if ServerSocketChannel has any incoming connections ready to accept
+* large number of channels can be checked for readiness simultaneously
+    * True readiness selection must be done by the operating system. 
+    * One of the most important functions performed by an operating system is to handle 
+    I/O requests and notify processes when their data is ready. 
+    * provides the abstraction by which Java code can request readiness selection service from the 
+    underlying operating system
+* manages information about a set of registered channels and their
+  readiness states. 
+  * Channels are registered with selectors, and a selector can be asked to
+  update the readiness states of the channels currently registered with it
+* SelectionKey encapsulates the registration relationship between a specific channel
+  and a specific selector
+  * SelectionKey objects contain two bit sets (encoded as integers) indicating which
   channel operations the registrant has an interest in and which operations the channel is
   ready to perform.
-* Although the register( ) method is defined on the SelectableChannel class, channels are
-  registered with selectors, not the other way around. A selector maintains a set of channels to
-  monitor. A given channel can be registered with more than one selector and has no idea which
-  Selector objects it's currently registered with. The choice to put the register( ) method in
-  SelectableChannel rather than in Selector was somewhat arbitrary. It returns a SelectionKey
-  object that encapsulates a relationship between the two objects. The important thing is to
-  remember that the Selector object controls the selection process for the channels registered
-  with it.
+* given channel can be registered with more than one selector and has no idea which
+  Selector objects it's currently registered with.
 * Selectors are the managing objects, not the selectable channel objects.
   The Selector object performs readiness selection of channels registered
   with it and manages selection keys.
-* Selectors are not
-  primary I/O objects like channels or streams: data never passes through them
-* ops - This is a bit
-        mask that represents the I/O operations that the selector should test for when checking the
-        readiness of that channel
+* data never passes through them
         
 # SelectionKey
 * a key represents the registration of a particular channel object with a
