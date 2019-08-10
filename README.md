@@ -141,23 +141,6 @@ ready to perform an operation of interest, such as reading or writing.
   The Selector object performs readiness selection of channels registered
   with it and manages selection keys.
 * data never passes through them
-        
-# SelectionKey
-* a key represents the registration of a particular channel object with a
-  particular selector object. 
-  * channel()
-  * selector()
-* A SelectionKey object contains two sets encoded as integer bit masks: one for those
-  operations of interest to the channel/selector combination (the interest set) and one
-  representing operations the channel is currently ready to perform (the ready set).
-* operations:
-    * `isReadable()`,
-    * `isWritable()`, 
-    * `isConnectable()`,
-    * `isAcceptable()`
-* The ready set contained by a SelectionKey object is as of the time the
-  selector last checked the states of the registered channels. The readiness
-  of individual channels could have changed in the meantime.
 * Each Selector object maintains three sets of keys:
   Registered key set
   The set of currently registered keys associated with the selector. Not every registered
@@ -177,7 +160,7 @@ ready to perform an operation of interest, such as reading or writing.
   Cancelled key set
   A subset of the registered key set, this set contains keys whose cancel( ) methods have
   been called (the key has been invalidated), but they have not been deregistered. This
-  set is private to the selector object and cannot be accessed directly.
+  set is private to the selector object and cannot be accessed directly.      
 * following three steps are performed:
   1. The cancelled key set is checked. If it's nonempty, each key in the cancelled set is
   removed from the other two sets, and the channel associated with the cancelled key is
@@ -223,29 +206,25 @@ ready to perform an operation of interest, such as reading or writing.
   ready channel will be updated. The return value will be the number of channels determined to
   be ready. Normally, this method returns a nonzero value since it blocks until a channel is
   ready. But it can return 0 if the wakeup( ) method of the selector is invoked by another thread.
-* int n = selector.selectNow( );
-  The selectNow( ) method performs the readiness selection process but will never block. If no
-  channels are currently ready, it immediately returns 0 
-* wakeup( ), provides the capability to gracefully break
-  out a thread from a blocked select( ) invocation
+* wakeup( ), provides the capability to gracefully break out a thread from a blocked select( ) invocation
+# SelectionKey
+* a key represents the registration of a particular channel object with a
+  particular selector object. 
+  * `channel()`
+  * `selector()`
+* A SelectionKey object contains two sets
+    * the interest set - representing operations we are interested in
+    * the ready set - representing operations the channel is currently ready to perform
+        * is as of the time the selector last checked the states of the registered channels
+* operations:
+    * `isReadable()`,
+    * `isWritable()`, 
+    * `isConnectable()`,
+    * `isAcceptable()`
 * The important part is what happens when a key is not already in the selected set. When at
   least one operation of interest becomes ready on the channel, the ready set of the key is
   cleared, and the currently ready operations are added to the ready set. The key is then added to
   the selected key set
-* The way to clear the ready set of a SelectionKey is to remove the key itself from the set of
-  selected keys. The ready set of a selection key is modified only by the Selector object during a
-  selection operation. The idea is that only keys in the selected set are considered to have
-  legitimate readiness information. That information persists in the key until the key is removed
-  from the selected key set, which indicates to the selector that you have seen and dealt with it.
-  The next time something of interest happens on the channel, the key will be set to reflect the
-  state of the channel at that point and once again be added to the selected key set.
-* The conventional approach is to perform a select( )
-  call on the selector (which updates the selected key set) then iterate over the set of keys
-  returned by selectedKeys( ). As each key is examined in turn, the associated channel is dealt
-  with according to the key's ready set. The keys are then removed from the selected key set
-* Selector objects are thread-safe, but the key sets they contain are not. The key sets returned by
-  the keys( ) and selectedKeys( ) methods are direct references to private Set objects inside the
-  Selector object. These sets can change at any time. The registered key set is read-only.
 * A better approach is to use one selector for all selectable channels and delegate the servicing
   of ready channels to other threads. You have a single point to monitor channel readiness and a
   decoupled pool of worker threads to handle the incoming data.
