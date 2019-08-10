@@ -159,51 +159,26 @@ ready to perform an operation of interest, such as reading or writing.
         * contains keys whose cancel( ) methods have been called (the key has been invalidated), 
         but they have not been deregistered     
 * following three steps are performed:
-  1. The cancelled key set is checked. If it's nonempty, each key in the cancelled set is
-  removed from the other two sets, and the channel associated with the cancelled key is
-  deregistered. When this step is complete, the cancelled key set is empty.
-  2. The operation interest sets of each key in the registered key set are examined. Changes
-  made to the interest sets after they've been examined in this step will not be seen
-  during the remainder of the selection operation.
-  Java NIO
-  130
-  Once readiness criteria have been determined, the underlying operating system is
-  queried to determine the actual readiness state of each channel for its operations of
-  interest. Depending on the specific select( ) method called, the thread may block at
-  this point if no channels are currently ready, possibly with a timeout value.
-  Upon completion of the system calls, which may have caused the invoking thread to
-  be put to sleep for a while, the current readiness status of each channel will have been
-  determined. Nothing further happens to any channel not found to be currently ready.
-  For each channel that the operating system indicates is ready for at least one of the
-  operations in its interest set, one of the following two things happens:
-  a. If the key for the channel is not already in the selected key set, the key's ready
-  set is cleared, and the bits representing the operations determined to be
-  currently ready on the channel are set.
-  b. Otherwise, the key is already in the selected key set. The key's ready set is
-  updated by setting bits representing the operations found to be currently ready.
-  Any previously set bits representing operations that are no longer ready are not
-  cleared. In fact, no bits are cleared. The ready set as determined by the
-  operating system is bitwise-disjoined into the previous ready set. 2 Once a key
-  has been placed in the selected key set of the selector, its ready set is
-  cumulative. Bits are set but never cleared.
-  3. Step 2 can potentially take a long time, especially if the invoking thread sleeps. Keys
-  associated with this selector could have been cancelled in the meantime. When Step 2
-  completes, the actions taken in Step 1 are repeated to complete deregistration of any
+  1. The cancelled key set is checked
+    * each key in the cancelled set is removed from all three sets
+    * the channel associated with the cancelled key is deregistered
+  2. The operation interest sets of each key in the registered key set are examined.
+    * the underlying operating system is queried to determine the actual readiness state 
+    of each channel for its operations of interest. 
+    * if the key for the channel is not already in the selected key set bits representing 
+    the operations determined to be currently ready on the channel are set
+  3. Step 1 are repeated to complete deregistration of any
   channels whose keys were cancelled while the selection operation was in progress.
-  4. The value returned by the select operation is the number of keys whose operation
-  ready sets were modified in Step 2, not the total number of channels in the selection
-  key set. The return value is not a count of ready channels, but the number of channels
-  that became ready since the last invocation of select( ). A channel ready on a previous
-  call and still ready on this call won't be counted, nor will a channel that was ready on a
-  previous call but is no longer ready. These channels could still be in the selection key
-  set but will not be counted in the return value. The return value could be 0 .
 * selector.select( );
   This call blocks indefinitely if no channels are ready. As soon as at least one of the registered
   channels is ready, the selection key set of the selector is updated, and the ready sets for each
   ready channel will be updated. The return value will be the number of channels determined to
   be ready. Normally, this method returns a nonzero value since it blocks until a channel is
   ready. But it can return 0 if the wakeup( ) method of the selector is invoked by another thread.
+  * `select()` - The return value is not a count of ready channels, but the number of channels
+      that became ready since the last invocation of select( ).
 * wakeup( ), provides the capability to gracefully break out a thread from a blocked select( ) invocation
+
 # SelectionKey
 * a key represents the registration of a particular channel object with a
   particular selector object. 
