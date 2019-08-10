@@ -141,26 +141,23 @@ ready to perform an operation of interest, such as reading or writing.
   The Selector object performs readiness selection of channels registered
   with it and manages selection keys.
 * data never passes through them
-* Each Selector object maintains three sets of keys:
-  Registered key set
-  The set of currently registered keys associated with the selector. Not every registered
-  key is necessarily still valid. This set is returned by the keys( ) method and may be
-  empty. The registered key set is not directly modifiable; attempting to do so yields a
-  java.lang.UnsupportedOperationException.
-  Selected key set
-  A subset of the registered key set. Each member of this set is a key whose associated
-  channel was determined by the selector (during a prior selection operation) to be ready
-  for at least one of the operations in the key's interest set. This set is returned by the
-  selectedKeys( ) method (and may be empty).
-  Don't confuse the selected key set with the ready set. This is a set of keys, each with an
-  associated channel that is ready for at least one operation. Each key has an embedded ready
-  set that indicates the set of operations the associated channel is ready to perform.
-  Keys can be directly removed from this set, but not added. Attempting to add to the selected
-  key set throws java.lang.UnsupportedOperationException.
-  Cancelled key set
-  A subset of the registered key set, this set contains keys whose cancel( ) methods have
-  been called (the key has been invalidated), but they have not been deregistered. This
-  set is private to the selector object and cannot be accessed directly.      
+* maintains three sets of keys:
+    * Registered key set
+        * currently registered keys associated with the selector
+        * not every registered key is necessarily still valid. 
+        * returned by the keys( ) method 
+    * Selected key set
+        * `Selected key set c Registered key set`
+        * key whose associated channel was determined by the selector to be ready
+  for at least one of the operations in the key's interest set. 
+        * returned by the selectedKeys( )
+        * selected key set vd the ready set 
+            * Each key has an embedded ready set that indicates the set of operations the 
+            associated channel is ready to perform
+    * Cancelled key set
+        * `Cancelled key set c Registered key set`
+        * contains keys whose cancel( ) methods have been called (the key has been invalidated), 
+        but they have not been deregistered     
 * following three steps are performed:
   1. The cancelled key set is checked. If it's nonempty, each key in the cancelled set is
   removed from the other two sets, and the channel associated with the cancelled key is
