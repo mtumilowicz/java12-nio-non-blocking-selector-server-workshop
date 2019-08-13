@@ -91,14 +91,6 @@ ready to perform an operation of interest, such as reading or writing.
 # Selectors 
 * provide the ability to do readiness selection, which enables multiplexed I/O
 * controls the selection process for the channels registered with it
-* Imagine a bank with three drive-through lanes. In the traditional (nonselector)
-  scenario, imagine that each drive-through lane has a pneumatic tube that runs to its own teller
-  station inside the bank, and each station is walled off from the others. This means that each
-  tube (channel) requires a dedicated teller (worker thread). This approach doesn't scale well
-  and is wasteful. For each new tube (channel) added, a new teller is required, along with
-  associated overhead such as tables, chairs, paper clips (memory, CPU cycles, context
-  switching), etc. And when things are slow, these resources (which have associated costs) tend
-  to sit idle.
 * Now imagine a different scenario in which each pneumatic tube (channel) is connected to
   a single teller station inside the bank. The station has three slots where the carriers (data
   buffers) arrive, each with an indicator (selection key) that lights up when the carrier is in
@@ -184,10 +176,10 @@ ready to perform an operation of interest, such as reading or writing.
   particular selector object. 
   * `channel()`
   * `selector()`
-* A SelectionKey object contains two sets
-    * the interest set - representing operations we are interested in
-    * the ready set - representing operations the channel is currently ready to perform
-        * is as of the time the selector last checked the states of the registered channels
+* SelectionKey object contains two sets
+    * the interest set - operations we are interested in
+    * the ready set - operations the channel is currently ready to perform
+        * the time the selector last checked the states of the registered channels
 * operations:
     * `isReadable()`,
     * `isWritable()`, 
@@ -197,6 +189,7 @@ ready to perform an operation of interest, such as reading or writing.
   least one operation of interest becomes ready on the channel, the ready set of the key is
   cleared, and the currently ready operations are added to the ready set. The key is then added to
   the selected key set
-* A better approach is to use one selector for all selectable channels and delegate the servicing
-  of ready channels to other threads. You have a single point to monitor channel readiness and a
+* use one selector for all selectable channels and delegate the servicing
+  of ready channels to other threads
+  * you have a single point to monitor channel readiness and a
   decoupled pool of worker threads to handle the incoming data.
