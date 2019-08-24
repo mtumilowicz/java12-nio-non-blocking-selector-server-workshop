@@ -86,6 +86,8 @@ such as reading or writing
     
 # Selectors
 * provide the ability to do readiness selection, which enables multiplexed I/O
+    * I/O multiplexing is the capability to tell the kernel that we want to be notified if one or more I/O conditions 
+    are ready, like input is ready to be read
 * controls the selection process for the channels registered with it
 * simple analogy
     * each pneumatic tube (channel) is connected to a single teller station inside the bank
@@ -95,26 +97,22 @@ such as reading or writing
     to determine if any of the channels are ready (readiness selection) 
     * teller (worker thread) can perform another task while the drive-through lanes (channels) are idle yet 
     still respond to them in a timely manner when they require attention
-* You register one or more previously created selectable channels with a selector object. 
-* A key that represents the relationship between one channel and one selector is returned. 
-* Selection keys remember what you are interested in for each channel. 
-* They also track the operations of interest that their channel is currently ready to perform. 
-* When you invoke select( ) on a selector object, the associated keys are updated by checking all the channels 
-registered with that selector. 
-* You can obtain a set of the keys whose channels were found to be ready at that point. 
-* By iterating over these keys, you can service each channel that has become ready since the last time you invoked 
-select( ).
-* selectors provide the capability to ask a channel if it's ready to
-  perform an I/O operation of interest to you
-  * for example - check if ServerSocketChannel has any incoming connections ready to accept
+* Selection keys remember what you are interested in for each channel
+    * track the operations of interest that their channel is currently ready to perform
+* invoking `select()` on a selector object causes that the associated keys are updated by checking all the channels 
+registered with that selector
+* by iterating over these keys, you can service each channel that has become ready since the last time you invoked 
+`select()`
+* selectors provide the capability to ask a channel if it's ready to perform an I/O operation of interest to you
+  * for example - check if `ServerSocketChannel` has any incoming connections ready to accept
 * large number of channels can be checked for readiness simultaneously
-    * True readiness selection must be done by the operating system. 
+    * true readiness selection is performed by operating system
     * One of the most important functions performed by an operating system is to handle 
-    I/O requests and notify processes when their data is ready. 
-    * provides the abstraction by which Java code can request readiness selection service from the 
+    I/O requests and notify processes when their data is ready 
+    * abstractions by which Java code can request readiness selection service from the 
     underlying operating system
 * manages information about a set of registered channels and their
-  readiness states. 
+  readiness states
   * Channels are registered with selectors, and a selector can be asked to
   update the readiness states of the channels currently registered with it
 * SelectionKey encapsulates the registration relationship between a specific channel
