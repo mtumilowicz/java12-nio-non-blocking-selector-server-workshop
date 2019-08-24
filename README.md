@@ -153,8 +153,7 @@ registered with that selector
     2. operation interest sets of each key in the registered key set are examined
       * underlying operating system is queried to determine the actual readiness state 
       of each channel for its operations of interest
-      * if the key for the channel is not already in the selected key set bits representing 
-      the operations determined to be currently ready on the channel are set
+      * when a key is not already in the selected set - it is added to the selected key set
     3. Step 1 are repeated to complete deregistration of any
     channels whose keys were cancelled while the selection operation was in progress.
 * `selector.select()`
