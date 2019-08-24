@@ -73,18 +73,18 @@ the state of that connection
 * it's no longer necessary to dedicate a thread to each socket connection 
 * it's possible to perform readiness selection of socket channels using a `Selector` object
 * `SocketChannel`, `ServerSocketChannel` create a peer socket object when they are instantiated
-    * classes from `java.net`: `Socket`, `ServerSocket`, which have been updated to be aware of channels
+    * classes from `java.net`: `Socket`, `ServerSocket` have been updated to be aware of channels
 * Socket channels delegate protocol operations to the peer socket object
-    * `ServerSocketChannel` doesn't have a `bind()` method, it's necessary to fetch the peer
+    * `ServerSocketChannel` doesn't have a `bind()` method, we have to fetch the peer
       socket and use it to bind to a port to begin listening for connections
-* readiness selection is a mechanism by which a channel can be queried to determine if it's
-ready to perform an operation of interest, such as reading or writing.
+* readiness selection - channel can be queried to determine if it's ready to perform an operation of interest, 
+such as reading or writing
 * sockets are stream-oriented, not packet-oriented
     * bytes sent will arrive in the same order, but
     * sender may write 20 bytes to a socket, and the receiver gets only 3 when invoking `read()` 
     - remaining part may still be in transit
     
-# Selectors 
+# Selectors
 * provide the ability to do readiness selection, which enables multiplexed I/O
 * controls the selection process for the channels registered with it
 * simple analogy
