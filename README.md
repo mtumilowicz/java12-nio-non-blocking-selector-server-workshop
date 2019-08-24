@@ -18,35 +18,33 @@ runtime optimizations), so
     * `Nthreads = NCPU * UCPU * (1 + W/C)`
         * NCPU is the number of cores, available through 
         `Runtime.getRuntime().availableProcessors()`
-        * UCPU is the target CPU utilization (between 0 and 1), and
+        * UCPU is the target CPU utilization (between 0 and 1)
         * W/C is the ratio of wait time to compute time
 * operating system vs Java stream-based I/O model
     * operating system wants to move data in large chunks (buffers)
     * I/O classes of the JVM operates on small pieces — single bytes, or lines of text
-    * operating system delivers buffers full of data -> stream classes of
-    `java.io` breaks it down into little pieces
-    * NIO makes it easier to back the big loaded buffer right up to where you can make direct use of the data 
-    (a `ByteBuffer` object)
-    * `RandomAccessFile` with array-based `read( )` and `write( )` methods are pretty close to the underlying 
-    operating-system calls (even those methods entail at least one buffer copy)
+    * operating system delivers buffers full of data -> stream classes of `java.io` breaks it down into little pieces
+    * NIO provides similar concepts to operating system buffers - `ByteBuffer` object
+    * `RandomAccessFile` with array-based `read( )` and `write( )` are pretty close to the underlying 
+    operating-system calls (although at least one buffer copy)
 
 # Buffer Handling
 * buffers, and how buffers are handled, are the basis of all I/O
 * "input/output" means nothing more than moving data in and out of buffers
-* processes perform I/O by requesting of the operating system that data be drained from a buffer (write) 
-or that a buffer be filled with data (read)
+* processes perform I/O by requesting operating system to:
+    * write: drain data from a buffer 
+    * read: fill buffer with data
 * steps:
-    1. the process requests that its buffer be filled by making the `read()` system call
+    1. process requests that its buffer be filled by making the `read()` system call
     1. kernel issuing a command to the disk controller hardware to fetch the data from disk
-    1. disk controller writes the data directly into a kernel memory buffer by DMA without further assistance from
-    the main CPU
-    1. kernel copies the data from the temporary buffer in kernel space to the buffer specified by the process when it
-    requested the `read()` operation
-* User space is a nonprivileged area: code executing there cannot directly access hardware devices
+    1. disk controller writes the data directly into a kernel memory buffer by DMA (direct memory access)
+    1. kernel copies the data from the temporary buffer to the buffer specified by the process
 * kernel space is where the operating system lives
     * communication with device controllers
     * all I/O flows through kernel space
 * why disk controller not send directly to the buffer in user space?
+    * user space (where process lives) is a nonprivileged area: code executing there cannot directly access 
+    hardware devices
     * block-oriented hardware devices such as disk controllers operate on fixed-size data blocks 
     * user process may be requesting an oddly sized chunk of data 
     * kernel plays the role of intermediary, breaking down and reassembling data as it moves between 
