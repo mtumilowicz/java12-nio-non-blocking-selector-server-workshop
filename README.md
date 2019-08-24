@@ -62,9 +62,7 @@ runtime optimizations), so
 * is a conduit to an I/O service (a hardware device, a file or socket) and provides methods for 
 interacting with that service
 * socket channel objects are bidirectional
-* if a partial transfer was performed, the buffer can be resubmitted to the channel to continue
-transferring data where it left off and repeated until the buffer's `hasRemaining( )` method returns
-false
+* partial transfer - until buffer's `hasRemaining( )` method returns false
 * cannot be reused - represents a specific connection to a specific I/O service and encapsulates 
 the state of that connection 
 * when a channel is closed - connection is lost
