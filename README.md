@@ -147,22 +147,20 @@ registered with that selector
         * contains keys whose `cancel()` methods have been called (the key has been invalidated), 
         but they have not been deregistered     
 * following three steps are performed:
-  1. The cancelled key set is checked
-    * each key in the cancelled set is removed from all three sets
-    * the channel associated with the cancelled key is deregistered
-  2. The operation interest sets of each key in the registered key set are examined.
-    * the underlying operating system is queried to determine the actual readiness state 
-    of each channel for its operations of interest. 
-    * if the key for the channel is not already in the selected key set bits representing 
-    the operations determined to be currently ready on the channel are set
-  3. Step 1 are repeated to complete deregistration of any
-  channels whose keys were cancelled while the selection operation was in progress.
-* selector.select( );
-  This call blocks indefinitely if no channels are ready. As soon as at least one of the registered
-  channels is ready, the selection key set of the selector is updated, and the ready sets for each
-  ready channel will be updated. The return value will be the number of channels determined to
-  be ready. Normally, this method returns a nonzero value since it blocks until a channel is
-  ready. But it can return 0 if the wakeup( ) method of the selector is invoked by another thread.
-  * `select()` - The return value is not a count of ready channels, but the number of channels
-      that became ready since the last invocation of select( ).
-* wakeup( ), provides the capability to gracefully break out a thread from a blocked select( ) invocation
+    1. cancelled key set is checked
+      * each key in the cancelled set is removed from all three sets
+      * the channel associated with the cancelled key is deregistered
+    2. operation interest sets of each key in the registered key set are examined
+      * underlying operating system is queried to determine the actual readiness state 
+      of each channel for its operations of interest
+      * if the key for the channel is not already in the selected key set bits representing 
+      the operations determined to be currently ready on the channel are set
+    3. Step 1 are repeated to complete deregistration of any
+    channels whose keys were cancelled while the selection operation was in progress.
+* `selector.select()`
+    * blocks indefinitely if no channels are ready.
+    * this method returns a nonzero value since it blocks until a channel is ready
+    * it can return 0 if the `wakeup()` method of the selector is invoked
+  * `select()` - return value is not a count of ready channels, but the number of channels
+      that became ready since the last invocation of `select()`
+* `wakeup()` provides the capability to gracefully break out a thread from a blocked `select()` invocation
