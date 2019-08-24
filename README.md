@@ -94,20 +94,20 @@ ready to perform an operation of interest, such as reading or writing.
 * simple analogy
     * each pneumatic tube (channel) is connected to a single teller station inside the bank
     * station has three slots where the carriers (data buffers) arrive, each with an indicator (selection key) that 
-    lights up when the carrier is in the slot. 
+    lights up when the carrier is in the slot
     * teller (worker thread) once for a couple of minutes glances up at the indicator lights (invokes select( )) 
     to determine if any of the channels are ready (readiness selection) 
-    * teller (worker thread) can perform another task while the drive-through lanes (channels) are idle yet still respond to them in a timely manner when
-  they require attention.
-* You register one or
-  more previously created selectable channels with a selector object. A key that represents the
-  relationship between one channel and one selector is returned. Selection keys remember what
-  you are interested in for each channel. They also track the operations of interest that their
-  channel is currently ready to perform. When you invoke select( ) on a selector object, the
-  associated keys are updated by checking all the channels registered with that selector. You
-  can obtain a set of the keys whose channels were found to be ready at that point. By iterating
-  over these keys, you can service each channel that has become ready since the last time you
-  invoked select( ).
+    * teller (worker thread) can perform another task while the drive-through lanes (channels) are idle yet 
+    still respond to them in a timely manner when they require attention
+* You register one or more previously created selectable channels with a selector object. 
+* A key that represents the relationship between one channel and one selector is returned. 
+* Selection keys remember what you are interested in for each channel. 
+* They also track the operations of interest that their channel is currently ready to perform. 
+* When you invoke select( ) on a selector object, the associated keys are updated by checking all the channels 
+registered with that selector. 
+* You can obtain a set of the keys whose channels were found to be ready at that point. 
+* By iterating over these keys, you can service each channel that has become ready since the last time you invoked 
+select( ).
 * selectors provide the capability to ask a channel if it's ready to
   perform an I/O operation of interest to you
   * for example - check if ServerSocketChannel has any incoming connections ready to accept
