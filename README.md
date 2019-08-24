@@ -84,11 +84,31 @@ such as reading or writing
     * sender may write 20 bytes to a socket, and the receiver gets only 3 when invoking `read()` 
     - remaining part may still be in transit
     
+# SelectionKey
+* a key represents the registration of a particular channel object with a
+  particular selector object - for example we have methods: `channel()`, `selector()`
+* `SelectionKey` object contains two sets
+    * the interest set - operations we are interested in
+    * the ready set - operations the channel is ready to perform (time the selector last checked the states 
+    of the registered channels)
+* operations:
+    * `isReadable()`,
+    * `isWritable()`, 
+    * `isConnectable()`,
+    * `isAcceptable()`
+* we should use one selector for all selectable channels and delegate the servicing of ready channels to other threads
+  * therefore we have a single point to monitor channel readiness and a decoupled pool of worker threads to handle 
+  the incoming data
+      
 # Selectors
 * provide the ability to do readiness selection, which enables multiplexed I/O
     * I/O multiplexing is the capability to tell the kernel that we want to be notified if one or more I/O conditions 
     are ready, like input is ready to be read
-* controls the selection process for the channels registered with it
+* provide the capability to ask a channel if it's ready to perform an I/O operation of interest to you
+  * for example - check if `ServerSocketChannel` has any incoming connections ready to accept
+* manages information about a set of registered channels and their readiness states
+* channels are registered with selectors, and a selector can be asked to update the readiness states of the 
+  channels currently registered with it
 * simple analogy
     * each pneumatic tube (channel) is connected to a single teller station inside the bank
     * station has three slots where the carriers (data buffers) arrive, each with an indicator (selection key) that 
@@ -97,51 +117,34 @@ such as reading or writing
     to determine if any of the channels are ready (readiness selection) 
     * teller (worker thread) can perform another task while the drive-through lanes (channels) are idle yet 
     still respond to them in a timely manner when they require attention
-* Selection keys remember what you are interested in for each channel
-    * track the operations of interest that their channel is currently ready to perform
 * invoking `select()` on a selector object causes that the associated keys are updated by checking all the channels 
 registered with that selector
-* by iterating over these keys, you can service each channel that has become ready since the last time you invoked 
+* by iterating over these keys, we can service each channel that has become ready since the last time we invoked 
 `select()`
-* selectors provide the capability to ask a channel if it's ready to perform an I/O operation of interest to you
-  * for example - check if `ServerSocketChannel` has any incoming connections ready to accept
 * large number of channels can be checked for readiness simultaneously
     * true readiness selection is performed by operating system
     * One of the most important functions performed by an operating system is to handle 
     I/O requests and notify processes when their data is ready 
     * abstractions by which Java code can request readiness selection service from the 
     underlying operating system
-* manages information about a set of registered channels and their
-  readiness states
-  * Channels are registered with selectors, and a selector can be asked to
-  update the readiness states of the channels currently registered with it
-* SelectionKey encapsulates the registration relationship between a specific channel
-  and a specific selector
-  * SelectionKey objects contain two bit sets (encoded as integers) indicating which
-  channel operations the registrant has an interest in and which operations the channel is
-  ready to perform.
 * given channel can be registered with more than one selector and has no idea which
-  Selector objects it's currently registered with.
-* Selectors are the managing objects, not the selectable channel objects.
-  The Selector object performs readiness selection of channels registered
-  with it and manages selection keys.
+  `Selector` objects it's currently registered with.
 * data never passes through them
 * maintains three sets of keys:
     * Registered key set
         * currently registered keys associated with the selector
-        * not every registered key is necessarily still valid. 
-        * returned by the keys( ) method 
+        * not every registered key is necessarily still valid
+        * returned by the `keys()` method 
     * Selected key set
         * `Selected key set c Registered key set`
-        * key whose associated channel was determined by the selector to be ready
-  for at least one of the operations in the key's interest set. 
-        * returned by the selectedKeys( )
-        * selected key set vd the ready set 
-            * Each key has an embedded ready set that indicates the set of operations the 
-            associated channel is ready to perform
+        * key whose associated channel was determined by the selector to be ready for at least one of the 
+        operations in the key's interest set
+        * returned by the `selectedKeys()`
+    * selected key set vs the key's ready set 
+        * each key has an embedded ready set, and each key can be in selected key set
     * Cancelled key set
         * `Cancelled key set c Registered key set`
-        * contains keys whose cancel( ) methods have been called (the key has been invalidated), 
+        * contains keys whose `cancel()` methods have been called (the key has been invalidated), 
         but they have not been deregistered     
 * following three steps are performed:
   1. The cancelled key set is checked
@@ -163,26 +166,3 @@ registered with that selector
   * `select()` - The return value is not a count of ready channels, but the number of channels
       that became ready since the last invocation of select( ).
 * wakeup( ), provides the capability to gracefully break out a thread from a blocked select( ) invocation
-
-# SelectionKey
-* a key represents the registration of a particular channel object with a
-  particular selector object. 
-  * `channel()`
-  * `selector()`
-* SelectionKey object contains two sets
-    * the interest set - operations we are interested in
-    * the ready set - operations the channel is currently ready to perform
-        * the time the selector last checked the states of the registered channels
-* operations:
-    * `isReadable()`,
-    * `isWritable()`, 
-    * `isConnectable()`,
-    * `isAcceptable()`
-* The important part is what happens when a key is not already in the selected set. When at
-  least one operation of interest becomes ready on the channel, the ready set of the key is
-  cleared, and the currently ready operations are added to the ready set. The key is then added to
-  the selected key set
-* use one selector for all selectable channels and delegate the servicing
-  of ready channels to other threads
-  * you have a single point to monitor channel readiness and a
-  decoupled pool of worker threads to handle the incoming data.
