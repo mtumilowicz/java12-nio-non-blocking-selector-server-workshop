@@ -91,14 +91,13 @@ ready to perform an operation of interest, such as reading or writing.
 # Selectors 
 * provide the ability to do readiness selection, which enables multiplexed I/O
 * controls the selection process for the channels registered with it
-* Now imagine a different scenario in which each pneumatic tube (channel) is connected to
-  a single teller station inside the bank. The station has three slots where the carriers (data
-  buffers) arrive, each with an indicator (selection key) that lights up when the carrier is in
-  the slot. Also imagine that the teller (worker thread) has a sick cat and spends as much time as
-  possible reading Do It Yourself Taxidermy. 1 At the end of each paragraph, the teller glances
-  up at the indicator lights (invokes select( )) to determine if any of the channels are ready
-  (readiness selection). The teller (worker thread) can perform another task while
-  the drive-through lanes (channels) are idle yet still respond to them in a timely manner when
+* simple analogy
+    * each pneumatic tube (channel) is connected to a single teller station inside the bank
+    * station has three slots where the carriers (data buffers) arrive, each with an indicator (selection key) that 
+    lights up when the carrier is in the slot. 
+    * teller (worker thread) once for a couple of minutes glances up at the indicator lights (invokes select( )) 
+    to determine if any of the channels are ready (readiness selection) 
+    * teller (worker thread) can perform another task while the drive-through lanes (channels) are idle yet still respond to them in a timely manner when
   they require attention.
 * You register one or
   more previously created selectable channels with a selector object. A key that represents the
