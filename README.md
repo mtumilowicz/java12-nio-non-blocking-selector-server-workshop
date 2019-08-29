@@ -11,8 +11,8 @@ runtime optimizations), so
     * applications are no longer CPU bound (spending most of their time executing code) 
     * they are I/O bound (waiting for data transfers)
 * how to adjust number of threads
-    * CPU intense tasks - adding more threads than cores will have harmful effect on performance,
-    suppose that processor works at full power and we force it to do context switches
+    * CPU intense tasks - adding more threads than cores will have harmful effect on performance
+        * suppose that processor works at full power and we force it to do context switches
     * I/O waiting - adding more threads could be beneficial - context switches are not so harmful
     if thread is only waiting
     * `Nthreads = NCPU * UCPU * (1 + W/C)`
@@ -43,7 +43,7 @@ runtime optimizations), so
     * communication with device controllers
     * all I/O flows through kernel space
 * why disk controller not send directly to the buffer in user space?
-    * user space (where process lives) is a nonprivileged area: code executing there cannot directly access 
+    * user space (where process lives) is a unprivileged area: code executing there cannot directly access 
     hardware devices
     * block-oriented hardware devices such as disk controllers operate on fixed-size data blocks 
     * user process may be requesting an oddly sized chunk of data 
@@ -62,7 +62,7 @@ runtime optimizations), so
 * is a conduit to an I/O service (a hardware device, a file or socket) and provides methods for 
 interacting with that service
 * socket channel objects are bidirectional
-* partial transfer - until buffer's `hasRemaining( )` method returns false
+* allows partial transfer - until buffer's `hasRemaining( )` method returns false
 * cannot be reused - represents a specific connection to a specific I/O service and encapsulates 
 the state of that connection 
 * when a channel is closed - connection is lost
@@ -81,12 +81,12 @@ the state of that connection
 such as reading or writing
 * sockets are stream-oriented, not packet-oriented
     * bytes sent will arrive in the same order, but
-    * sender may write 20 bytes to a socket, and the receiver gets only 3 when invoking `read()` 
+    * sender may write N bytes to a socket, and the receiver gets only K when invoking `read()` 
     - remaining part may still be in transit
     
 # SelectionKey
 * a key represents the registration of a particular channel object with a
-  particular selector object - for example we have methods: `channel()`, `selector()`
+  particular selector object - moreover, we have methods: `channel()`, `selector()`
 * `SelectionKey` object contains two sets
     * the interest set - operations we are interested in
     * the ready set - operations the channel is ready to perform (time the selector last checked the states 
@@ -96,7 +96,8 @@ such as reading or writing
     * `isWritable()`, 
     * `isConnectable()`,
     * `isAcceptable()`
-* we should use one selector for all selectable channels and delegate the servicing of ready channels to other threads
+* good practice: we should use one selector for all selectable channels and delegate the servicing of ready 
+channels to other threads
   * therefore we have a single point to monitor channel readiness and a decoupled pool of worker threads to handle 
   the incoming data
       
@@ -105,7 +106,7 @@ such as reading or writing
     * I/O multiplexing is the capability to tell the kernel that we want to be notified if one or more I/O conditions 
     are ready, like input is ready to be read
 * provide the capability to ask a channel if it's ready to perform an I/O operation of interest to you
-  * for example - check if `ServerSocketChannel` has any incoming connections ready to accept
+  * for example - check if `ServerSocketChannel` has any incoming connections ready to be accepted
 * manages information about a set of registered channels and their readiness states
 * channels are registered with selectors, and a selector can be asked to update the readiness states of the 
   channels currently registered with it
@@ -113,7 +114,7 @@ such as reading or writing
     * each pneumatic tube (channel) is connected to a single teller station inside the bank
     * station has three slots where the carriers (data buffers) arrive, each with an indicator (selection key) that 
     lights up when the carrier is in the slot
-    * teller (worker thread) once for a couple of minutes glances up at the indicator lights (invokes select( )) 
+    * teller (worker thread) once for a couple of minutes glances up at the indicator lights (invokes `select()`) 
     to determine if any of the channels are ready (readiness selection) 
     * teller (worker thread) can perform another task while the drive-through lanes (channels) are idle yet 
     still respond to them in a timely manner when they require attention
@@ -123,13 +124,13 @@ registered with that selector
 `select()`
 * large number of channels can be checked for readiness simultaneously
     * true readiness selection is performed by operating system
-    * One of the most important functions performed by an operating system is to handle 
+    * one of the most important functions performed by an operating system is to handle 
     I/O requests and notify processes when their data is ready 
     * abstractions by which Java code can request readiness selection service from the 
     underlying operating system
 * given channel can be registered with more than one selector and has no idea which
-  `Selector` objects it's currently registered with.
-* data never passes through them
+  `Selector` objects it's currently registered with
+* data never passes through selectors
 * maintains three sets of keys:
     * Registered key set
         * currently registered keys associated with the selector
@@ -140,24 +141,14 @@ registered with that selector
         * key whose associated channel was determined by the selector to be ready for at least one of the 
         operations in the key's interest set
         * returned by the `selectedKeys()`
-    * selected key set vs the key's ready set 
-        * each key has an embedded ready set, and each key can be in selected key set
+        * selected key set vs the key's ready set 
+            * each key has an embedded ready set, and each key can be in selected key set
     * Cancelled key set
         * `Cancelled key set c Registered key set`
         * contains keys whose `cancel()` methods have been called (the key has been invalidated), 
         but they have not been deregistered     
-* following three steps are performed:
-    1. cancelled key set is checked
-      * each key in the cancelled set is removed from all three sets
-      * the channel associated with the cancelled key is deregistered
-    2. operation interest sets of each key in the registered key set are examined
-      * underlying operating system is queried to determine the actual readiness state 
-      of each channel for its operations of interest
-      * when a key is not already in the selected set - it is added to the selected key set
-    3. Step 1 are repeated to complete deregistration of any
-    channels whose keys were cancelled while the selection operation was in progress.
 * `selector.select()`
-    * blocks indefinitely if no channels are ready.
+    * blocks indefinitely if no channels are ready
     * this method returns a nonzero value since it blocks until a channel is ready
     * it can return 0 if the `wakeup()` method of the selector is invoked
   * `select()` - return value is not a count of ready channels, but the number of channels
