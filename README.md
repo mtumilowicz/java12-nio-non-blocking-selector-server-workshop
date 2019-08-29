@@ -12,9 +12,9 @@ _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
 * the main goal of this project is to show how to implement single-threaded and multi-threaded 
 multiplexed non-blocking server using `java.nio`
     * please refer firstly: https://github.com/mtumilowicz/java12-nio-non-blocking-polling-server-workshop
-* in the workshop we will try to fix failing tests from `test/*/workshop` package by following steps and hints in
-`java/*/workshop` package
-* answers: `java/*/answers` package
+* in the workshop we will try to fix failing tests from `test/server/workshop` package by following steps and hints in
+`java/server/workshop` and `java/hander/workshop` packages
+* answers: `java/server/answers`, `java/hander/answers` packages
 
 # theory in a nutshell
 # SelectionKey
