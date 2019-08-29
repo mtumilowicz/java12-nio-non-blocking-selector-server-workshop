@@ -3,7 +3,7 @@ plugins {
     id 'groovy'
 }
 
-group 'java12-nio-non-blocking-client-server-workshop'
+group 'java12-nio-non-blocking-selector-server-workshop'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 12
