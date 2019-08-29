@@ -8,6 +8,15 @@ _Reference_: https://github.com/kabutz/Transmogrifier
 _Reference_: http://www.java2s.com/Tutorials/Java/Socket/How_to_use_Java_SocketChannel_create_a_HTTP_client.htm  
 _Reference_: https://www.youtube.com/watch?v=3m9RN4aDh08
 
+# project description
+* the main goal of this project is to show how to implement single-threaded and multi-threaded 
+multiplexed non-blocking server using `java.nio`
+    * please refer firstly: https://github.com/mtumilowicz/java12-nio-non-blocking-polling-server-workshop
+* in the workshop we will try to fix failing tests from `test/*/workshop` package by following steps and hints in
+`java/*/workshop` package
+* answers: `java/*/answers` package
+
+# theory in a nutshell
 # SelectionKey
 * a key represents the registration of a particular channel object with a
   particular selector object - moreover, we have methods: `channel()`, `selector()`
