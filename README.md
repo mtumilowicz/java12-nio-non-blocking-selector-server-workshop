@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/mtumilowicz/java12-nio-non-blocking-selector-server-workshop.svg?branch=master)](https://travis-ci.com/mtumilowicz/java12-nio-non-blocking-selector-server-workshop)
+
 # java12-nio-non-blocking-selector-server-workshop
 
 _Reference_: https://www.udemy.com/java-non-blocking-io-with-javanio-and-design-patterns/  
