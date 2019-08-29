@@ -5,10 +5,10 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-class ClientConnectionAnswer {
-    private final PendingMessagesAnswer pendingMessages;
+class Step2_ClientConnectionAnswer {
+    private final Step1_PendingMessagesAnswer pendingMessages;
 
-    ClientConnectionAnswer(PendingMessagesAnswer pendingMessages) {
+    Step2_ClientConnectionAnswer(Step1_PendingMessagesAnswer pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 

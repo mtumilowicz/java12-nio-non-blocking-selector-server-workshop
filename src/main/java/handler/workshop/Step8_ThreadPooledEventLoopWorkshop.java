@@ -11,13 +11,13 @@ import java.util.concurrent.Executors;
 /**
  * Created by mtumilowicz on 2019-07-30.
  */
-public class ThreadPooledEventLoopWorkshop {
+public class Step8_ThreadPooledEventLoopWorkshop {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
-    private final PendingMessagesWorkshop pendingMessages = new PendingMessagesWorkshop();
+    private final Step1_PendingMessagesWorkshop pendingMessages = new Step1_PendingMessagesWorkshop();
     private final Queue<Runnable> switchKeysToWriteActions = new ConcurrentLinkedQueue<>();
-    private final ClientConnectionWorkshop clientConnection = new ClientConnectionWorkshop(pendingMessages);
-    private final ThreadPooledIncomingMessageWorkshop incomingMessage = new ThreadPooledIncomingMessageWorkshop(pool, pendingMessages, switchKeysToWriteActions);
-    private final OutgoingMessageWorkshop outgoingMessage = new OutgoingMessageWorkshop(pendingMessages);
+    private final Step2_ClientConnectionWorkshop clientConnection = new Step2_ClientConnectionWorkshop(pendingMessages);
+    private final Step6_ThreadPooledIncomingMessageWorkshop incomingMessage = new Step6_ThreadPooledIncomingMessageWorkshop(pool, pendingMessages, switchKeysToWriteActions);
+    private final Step3_OutgoingMessageWorkshop outgoingMessage = new Step3_OutgoingMessageWorkshop(pendingMessages);
 
     public void runOver(Selector selector) throws IOException {
         while (true) {

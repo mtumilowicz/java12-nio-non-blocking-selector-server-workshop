@@ -8,11 +8,11 @@ import java.util.Set;
 /**
  * Created by mtumilowicz on 2019-07-26.
  */
-public class SingleThreadedEventLoopAnswer {
-    private final PendingMessagesAnswer pendingMessages = new PendingMessagesAnswer();
-    private final ClientConnectionAnswer clientConnection = new ClientConnectionAnswer(pendingMessages);
-    private final SingleThreadedIncomingMessageAnswer incomingMessage = new SingleThreadedIncomingMessageAnswer(pendingMessages);
-    private final OutgoingMessageAnswer outgoingMessage = new OutgoingMessageAnswer(pendingMessages);
+public class Step7_SingleThreadedEventLoopAnswer {
+    private final Step1_PendingMessagesAnswer pendingMessages = new Step1_PendingMessagesAnswer();
+    private final Step2_ClientConnectionAnswer clientConnection = new Step2_ClientConnectionAnswer(pendingMessages);
+    private final Step5_SingleThreadedIncomingMessageAnswer incomingMessage = new Step5_SingleThreadedIncomingMessageAnswer(pendingMessages);
+    private final Step3_OutgoingMessageAnswer outgoingMessage = new Step3_OutgoingMessageAnswer(pendingMessages);
 
     public final void runOver(Selector selector) throws IOException {
         while (true) {

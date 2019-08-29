@@ -2,9 +2,9 @@ package handler.workshop;
 
 import java.nio.channels.SelectionKey;
 
-class SingleThreadedIncomingMessageWorkshop extends IncomingMessageWorkshop {
+class Step5_SingleThreadedIncomingMessageWorkshop extends Step4_IncomingMessageWorkshop {
 
-    SingleThreadedIncomingMessageWorkshop(PendingMessagesWorkshop pendingMessages) {
+    Step5_SingleThreadedIncomingMessageWorkshop(Step1_PendingMessagesWorkshop pendingMessages) {
         super(pendingMessages);
     }
 

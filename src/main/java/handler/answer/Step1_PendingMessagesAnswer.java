@@ -1,6 +1,6 @@
-package handler.workshop;
+package handler.answer;
 
-import transformer.BufferTransformerAnswer;
+import transformer.BufferTransformer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -8,33 +8,35 @@ import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.UnaryOperator;
 
-class PendingMessagesWorkshop {
+class Step1_PendingMessagesAnswer {
     private final Map<SocketChannel, Queue<ByteBuffer>> pendingMessagesByClient = new ConcurrentHashMap<>();
 
     void initFor(SocketChannel client) {
-        // entry for that client with thread-safe collection, hint: ConcurrentLinkedQueue
+        pendingMessagesByClient.put(client, new ConcurrentLinkedQueue<>());
     }
 
     void sendTo(SocketChannel client) throws IOException {
-        // get queue for the given client
-        // process all buffers (until queue is not empty), hint: poll()
-        // write to the client, hint: client.write(buf)
+        var buffersToWrite = pendingMessagesByClient.get(client);
+        while (!buffersToWrite.isEmpty()) {
+            client.write(buffersToWrite.poll());
+        }
     }
 
     void closeClientIfEnd(SocketChannel client) throws IOException {
-        // remove from collection
-        // close client, hint: client.close()
+        pendingMessagesByClient.remove(client);
+        client.close();
     }
 
     void prepareForSendingTo(SocketChannel client, ByteBuffer buffer) {
         prepareBuffer(buffer);
-        // add to the queue for the given client
+        pendingMessagesByClient.get(client).add(buffer);
     }
 
     private void prepareBuffer(ByteBuffer buf) {
-        // reverse the buffer, hint: buf.flip()
-        BufferTransformerAnswer.transformBytes(buf, UnaryOperator.identity());
+        buf.flip();
+        BufferTransformer.transformBytes(buf, UnaryOperator.identity());
     }
 }

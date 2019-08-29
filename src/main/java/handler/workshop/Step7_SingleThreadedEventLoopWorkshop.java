@@ -7,11 +7,11 @@ import java.nio.channels.Selector;
 /**
  * Created by mtumilowicz on 2019-07-26.
  */
-public class SingleThreadedEventLoopWorkshop {
-    private final PendingMessagesWorkshop pendingMessages = new PendingMessagesWorkshop();
-    private final ClientConnectionWorkshop clientConnection = new ClientConnectionWorkshop(pendingMessages);
-    private final SingleThreadedIncomingMessageWorkshop incomingMessage = new SingleThreadedIncomingMessageWorkshop(pendingMessages);
-    private final OutgoingMessageWorkshop outgoingMessage = new OutgoingMessageWorkshop(pendingMessages);
+public class Step7_SingleThreadedEventLoopWorkshop {
+    private final Step1_PendingMessagesWorkshop pendingMessages = new Step1_PendingMessagesWorkshop();
+    private final Step2_ClientConnectionWorkshop clientConnection = new Step2_ClientConnectionWorkshop(pendingMessages);
+    private final Step5_SingleThreadedIncomingMessageWorkshop incomingMessage = new Step5_SingleThreadedIncomingMessageWorkshop(pendingMessages);
+    private final Step3_OutgoingMessageWorkshop outgoingMessage = new Step3_OutgoingMessageWorkshop(pendingMessages);
 
     public final void runOver(Selector selector) throws IOException {
         while (true) {

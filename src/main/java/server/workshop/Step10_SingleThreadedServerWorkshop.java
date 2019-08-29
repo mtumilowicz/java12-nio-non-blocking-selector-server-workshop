@@ -3,9 +3,9 @@ package server.workshop;
 import java.io.IOException;
 import java.nio.channels.Selector;
 
-public class SingleThreadedServerWorkshop extends ServerWorkshop {
+public class Step10_SingleThreadedServerWorkshop extends Step9_ServerWorkshop {
 
-    public SingleThreadedServerWorkshop(int port) {
+    public Step10_SingleThreadedServerWorkshop(int port) {
         super(port);
     }
 
@@ -15,6 +15,6 @@ public class SingleThreadedServerWorkshop extends ServerWorkshop {
     }
 
     public static void main(String[] args) throws IOException {
-        new SingleThreadedServerWorkshop(81).start();
+        new Step10_SingleThreadedServerWorkshop(81).start();
     }
 }

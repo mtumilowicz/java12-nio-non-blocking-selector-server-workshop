@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-class OutgoingMessageAnswer {
-    private final PendingMessagesAnswer pendingMessages;
+class Step3_OutgoingMessageAnswer {
+    private final Step1_PendingMessagesAnswer pendingMessages;
 
-    OutgoingMessageAnswer(PendingMessagesAnswer pendingMessages) {
+    Step3_OutgoingMessageAnswer(Step1_PendingMessagesAnswer pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 

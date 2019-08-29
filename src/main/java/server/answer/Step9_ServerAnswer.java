@@ -1,30 +1,30 @@
-package server.workshop;
+package server.answer;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 
 /**
  * Created by mtumilowicz on 2019-07-31.
  */
-public abstract class ServerWorkshop {
+public abstract class Step9_ServerAnswer {
     protected final int port;
 
-    public ServerWorkshop(int port) {
+    public Step9_ServerAnswer(int port) {
         this.port = port;
     }
 
     public void start() throws IOException {
         log("Creating server socket on port " + port);
-        // open server socket channel, hint: ServerSocketChannel.open();
-        ServerSocketChannel ssc = null;
-        // bind to the localhost:port, hint: bind, new InetSocketAddress("localhost", port)
-        // configure non blocking, hint: configureBlocking(false)
+        ServerSocketChannel ssc = ServerSocketChannel.open();
+        ssc.bind(new InetSocketAddress("localhost", port));
+        ssc.configureBlocking(false);
         log("Created server socket on port " + port);
 
-        // open selector, hint: Selector.open()
-        // register selector for listening on new connections, hint: ssc.register(...), OP_ACCEPT
-        Selector selector = null;
+        Selector selector = Selector.open();
+        ssc.register(selector, SelectionKey.OP_ACCEPT);
         handleConnections(selector);
     }
 

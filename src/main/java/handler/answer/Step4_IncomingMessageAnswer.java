@@ -5,10 +5,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-abstract class IncomingMessageAnswer {
-    private final PendingMessagesAnswer pendingMessages;
+abstract class Step4_IncomingMessageAnswer {
+    private final Step1_PendingMessagesAnswer pendingMessages;
 
-    IncomingMessageAnswer(PendingMessagesAnswer pendingMessages) {
+    Step4_IncomingMessageAnswer(Step1_PendingMessagesAnswer pendingMessages) {
         this.pendingMessages = pendingMessages;
     }
 

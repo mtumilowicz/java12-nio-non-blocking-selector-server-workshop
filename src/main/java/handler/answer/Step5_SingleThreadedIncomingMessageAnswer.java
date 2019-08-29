@@ -2,9 +2,9 @@ package handler.answer;
 
 import java.nio.channels.SelectionKey;
 
-class SingleThreadedIncomingMessageAnswer extends IncomingMessageAnswer {
+class Step5_SingleThreadedIncomingMessageAnswer extends Step4_IncomingMessageAnswer {
 
-    SingleThreadedIncomingMessageAnswer(PendingMessagesAnswer pendingMessages) {
+    Step5_SingleThreadedIncomingMessageAnswer(Step1_PendingMessagesAnswer pendingMessages) {
         super(pendingMessages);
     }
 

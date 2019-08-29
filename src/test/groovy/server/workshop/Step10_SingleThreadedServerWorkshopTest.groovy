@@ -5,16 +5,16 @@ import spock.lang.Specification
 /**
  * Created by mtumilowicz on 2019-07-23.
  */
-class ThreadPoolServerWorkshopTest extends Specification {
+class Step10_SingleThreadedServerWorkshopTest extends Specification {
 
     def expectedClientOutput = ["send: xxx", "received: xxx"]
 
-    def "ThreadPoolServerWorkshop"() {
+    def "SingleThreadedServerWorkshop"() {
         given:
-        def port = 2
+        def port = 3
 
         expect:
-        expectedClientOutput == extractClientOutputFor(port, new ThreadPoolServerWorkshop(port))
+        expectedClientOutput == extractClientOutputFor(port, new Step10_SingleThreadedServerWorkshop(port))
     }
     
     def extractClientOutputFor(port, server) {

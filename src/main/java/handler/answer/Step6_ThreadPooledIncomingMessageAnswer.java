@@ -1,4 +1,4 @@
-package handler.workshop;
+package handler.answer;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -6,13 +6,13 @@ import java.nio.channels.SocketChannel;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
-class ThreadPooledIncomingMessageWorkshop extends IncomingMessageWorkshop {
+class Step6_ThreadPooledIncomingMessageAnswer extends Step4_IncomingMessageAnswer {
     private final ExecutorService pool;
     private final Queue<Runnable> selectorActions;
 
-    ThreadPooledIncomingMessageWorkshop(ExecutorService pool,
-                                        PendingMessagesWorkshop pendingMessages,
-                                        Queue<Runnable> selectorActions) {
+    Step6_ThreadPooledIncomingMessageAnswer(ExecutorService pool,
+                                            Step1_PendingMessagesAnswer pendingMessages,
+                                            Queue<Runnable> selectorActions) {
         super(pendingMessages);
         this.pool = pool;
         this.selectorActions = selectorActions;
@@ -20,12 +20,12 @@ class ThreadPooledIncomingMessageWorkshop extends IncomingMessageWorkshop {
 
     @Override
     void switchToWrite(SelectionKey key) {
-        // queue switching action, hint: selectorActions.add, key.interestOps, OP_WRITE
-        // wakeup selector, hint: key.selector().wakeup()
+        selectorActions.add(() -> key.interestOps(SelectionKey.OP_WRITE));
+        key.selector().wakeup();
     }
 
     @Override
     void handleIncomingMessage(SocketChannel client, ByteBuffer buffer, SelectionKey key) {
-        // submit handlingIncomingMessage to the pool
+        pool.submit(() -> super.handleIncomingMessage(client, buffer, key));
     }
 }
