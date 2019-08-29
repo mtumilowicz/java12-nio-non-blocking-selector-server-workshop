@@ -10,8 +10,7 @@ sourceCompatibility = 12
 targetCompatibility = 12
 
 test {
-    exclude '**/workshop/**'
-    exclude '**/answers/**' // excluded due to travis bug: https://github.com/travis-ci/travis-ci/issues/7906
+    exclude '**/*' // excluded due to travis bug: https://github.com/travis-ci/travis-ci/issues/7906
 }
 
 repositories {
