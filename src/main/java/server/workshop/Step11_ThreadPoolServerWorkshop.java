@@ -1,11 +1,11 @@
 package server.workshop;
 
-import server.answer.Step9_ServerAnswer;
+import server.answers.Step9_ServerAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;
 
-public class Step11_ThreadPoolServerWorkshop extends Step9_ServerAnswer {
+public class Step11_ThreadPoolServerWorkshop extends Step9_ServerWorkshop {
 
     public Step11_ThreadPoolServerWorkshop(int port) {
         super(port);

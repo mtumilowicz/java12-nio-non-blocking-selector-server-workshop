@@ -1,6 +1,6 @@
-package server.answer;
+package server.answers;
 
-import handler.answer.Step7_SingleThreadedEventLoopAnswer;
+import handler.answers.Step7_SingleThreadedEventLoopAnswer;
 
 import java.io.IOException;
 import java.nio.channels.Selector;
